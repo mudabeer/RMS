@@ -6,6 +6,10 @@ const vcoSchema = mongoose.Schema({
         ref: 'Room',
         required: [true,'please provide room id']
     },
+    roomCode:{
+        type: String,
+        required: true,
+    },
     userId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

@@ -26,6 +26,11 @@ const updateMember = async (req,res) => {
 }
 
 const deleteMember = async (req,res) => {
+
+    if(req.room.creator.toString() === req.params.memberId){
+        throw new BadRequestError('can not delete creator from room')
+    }
+
     req.targetMember.deleteOne();
 
     await req.room.save()

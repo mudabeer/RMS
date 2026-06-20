@@ -29,9 +29,6 @@ const getRooms = async (req,res) => {
         queryObject.roomCode = roomCode
     }
 
-    console.log(queryObject);
-    
-
     let result = Room.find(queryObject)
 
     if(sort === 'latest'){
@@ -58,25 +55,13 @@ const getRooms = async (req,res) => {
     result = result.skip(skip).limit(limit)
     
     const rooms = await result;
-
-     console.log(rooms);
-
     const totalRooms = await Room.countDocuments(queryObject);
     const numOfPages = Math.ceil(totalRooms / limit)
 
     res.status(StatusCodes.OK).json({rooms,totalRooms,numOfPages})
 }
 const getSingleRoom = async (req,res) => {
-
-    const id = req.params.id
-
-    const room = await Room.findOne({_id:id,"members.user":req.user.userId})
-
-    if(!room){
-        throw new NotFoundError('room not found')
-    }
-
-    res.status(StatusCodes.OK).json({room})
+    res.status(StatusCodes.OK).json({room:req.room})
 }
 
 const genVco = async (req,res) => {
@@ -106,7 +91,13 @@ const genVco = async (req,res) => {
 
     const code = nanoid(4)
 
-    const vco = await Vco.create({roomId:room._id,userId:req.user.userId,code})
+    const vcoDoc = await Vco.findOne({userId:req.user.userId})
+
+    if(vcoDoc){
+        await vcoDoc.deleteOne({_id:vcoDoc._id})
+    }
+
+    const vco = await Vco.create({roomId:room._id,roomCode,userId:req.user.userId,code})
 
     await sendVco(creator.email,creator.name,code)
 
@@ -177,31 +168,23 @@ const createRoom = async (req,res) => {
 
 const updateRoom = async (req,res) => {
     const {
-        body:{name},
-        params:{id:roomId},
+        body:{name}
     } = req
-
-    const room = await Room.findOne({_id:roomId})
-
-    if(!room){
-        throw new NotFoundError('room not found')
-    }
 
     if(!name){
         throw new BadRequestError('provide name')
     }
 
-    room.name = name
+    req.room.name = name
 
-    await room.save()
+    await req.room.save()
 
     res.status(StatusCodes.OK).json({"msg":'room updated'})
 }
 
 const deleteRoom = async (req,res) => {
     const {
-        user:{userId},
-        params: {id:roomId}
+        params: {roomId}
     }  = req
 
     const room = await Room.deleteOne({_id:roomId})

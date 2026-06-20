@@ -7,11 +7,13 @@ const RefreshToken = require('../models/RefreshToken')
 const {StatusCodes} = require('http-status-codes')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 
 const generateOtp = require('../utils/generateOTP')
 const {
     sendRegCode,
-    greetMail
+    greetMail,
+    resetPasswordMail
 } = require('../services/emailService')
 
 const {
@@ -96,6 +98,62 @@ const register = async (req,res) => {
 
 }
 
+const forgotPassword = async (req,res) => {
+    const {email} = req.body
+
+    if(!email){
+        throw new BadRequestError('please provide email')
+    }
+
+    const user = await User.findOne({email})
+
+    if(!user){
+        throw new NotFoundError('user not found')
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex')
+
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    user.passwordResetToken = hashedToken
+    user.passwordResetExpires = Date.now() + 10 * 60 * 1000
+
+    await user.save()
+
+    const resetLink = `${process.env.FRONTEND_URL || 'frot'}/reset-password/${resetToken}`
+
+    await resetPasswordMail(resetLink,email)
+
+    res.status(StatusCodes.OK).json({'msg':'password reset link sent to email'})
+}
+
+const resetPassword = async (req,res) => {
+    const {newPassword} = req.body
+
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(req.params.token)
+        .digest('hex')
+
+    const user = await User.findOne({passwordResetToken:hashedToken})
+
+    if(!user || user.passwordResetExpires < Date.now()){
+        throw new BadRequestError('invalid token')
+    }
+
+    if(!newPassword){
+        throw new BadRequestError('please provide newpassword')
+    }
+
+    user.password = newPassword
+    await user.save()
+
+    res.status(StatusCodes.OK).json({'msg':"password reset successfull"})
+}
+
 const login = async (req,res) => {
     const {email,password} = req.body
 
@@ -165,9 +223,28 @@ const refresh = async (req,res) => {
     }
 }
 
+const logout = async (req,res) => {
+    console.log(req.user);
+    
+    await RefreshToken.deleteOne({user:req.user.userId})
+
+    res.clearCookie('refreshToken', {
+        httpOnly: true,
+    });
+
+    res.clearCookie('accessToken', {
+        httpOnly: true,
+    });
+
+    res.status(StatusCodes.OK).json({'msg':'logout successfull!!'})
+}
+
 module.exports = {
     sendCode,
     register,
     login,
-    refresh
+    refresh,
+    logout,
+    forgotPassword,
+    resetPassword
 }

@@ -20,6 +20,12 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: [true, 'password is required']
+    },
+    passwordResetToken: {
+        type: String
+    },
+    passwordResetExpires: {
+        type: Date
     }
 })
 

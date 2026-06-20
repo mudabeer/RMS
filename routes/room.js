@@ -2,7 +2,10 @@ const express = require('express')
 const router = express.Router()
 
 const auth = require('../meddlewares/authentication')
-const loadRoomAndMember = require('../meddlewares/loadRoomAndMember')
+const loadRoom = require('../meddlewares/loadRoom')
+const memberExistsInRoom = require('../meddlewares/memberExistsInRoom')
+const requireCreator = require('../meddlewares/requireCreator')
+const requireRoomMember = require('../meddlewares/requireRoomMember')
 
 const {
     updateMember,
@@ -21,9 +24,19 @@ const {
 
 router.route('/').get(auth,getRooms).post(auth,createRoom)
 router.route('/join-room').patch(auth,joinRoom)
-router.route('/:id').get(auth,getSingleRoom).patch(auth,updateRoom).delete(auth,deleteRoom)
+router.route('/:roomId').get(auth,loadRoom,requireRoomMember,getSingleRoom)
+                        .patch(auth,loadRoom,requireCreator,updateRoom)
+                        .delete(auth,loadRoom,requireCreator,deleteRoom)
 router.route('/gen-vco').post(auth,genVco)
-router.route('/:roomId/member/:memberId').patch(auth,loadRoomAndMember,updateMember)
-router.route('/:roomId/member/:memberId').delete(auth,loadRoomAndMember,deleteMember)  
+router.route('/:roomId/member/:memberId').patch(auth,
+                                                loadRoom,
+                                                memberExistsInRoom,
+                                                requireCreator,
+                                                updateMember)
+router.route('/:roomId/member/:memberId').delete(auth,
+                                                loadRoom,
+                                                memberExistsInRoom,
+                                                requireCreator,
+                                                deleteMember)  
 
 module.exports = router

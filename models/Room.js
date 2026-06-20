@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+    const mongoose = require('mongoose')
 
 const roomSchema = mongoose.Schema({
     name: {
@@ -8,7 +8,6 @@ const roomSchema = mongoose.Schema({
     roomCode: {
         type: String,
         required: true,
-        unique: true
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
@@ -19,7 +18,6 @@ const roomSchema = mongoose.Schema({
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
-            unique: true,
             required: [true, 'user is must be provided']
         },
         role: {

@@ -18,6 +18,37 @@ const sendRegCode = async (email,otp) => {
         throw new BadRequestError('Failed to send verification email')
     }    
 };
+const resetPasswordMail = async (resetLink,email) => {
+    
+    const info = await transporter.sendMail({
+        from:process.env.EMAIL,
+        to:email,
+        subject: 'RMS Password Reset Request',
+        html: `<h2>Reset Your Password</h2>
+
+<p>Hello,</p>
+
+<p>We received a request to reset the password for your account.</p>
+
+<p>Please click the link below to create a new password:</p>
+
+<p>
+  <a href="${resetLink}">
+    Reset Password
+  </a>
+</p>
+
+<p>This link will expire in 10 minutes.</p>
+
+<p>If you did not request a password reset, please ignore this email. Your account remains secure.</p>
+
+<p>Thank you,<br>RMS Team</p>
+`
+    },)
+    if(info.accepted.length === 0){
+        throw new BadRequestError('Failed to send verification email')
+    }    
+};
 
 const greetMail = async (email, name) => {
 
@@ -143,5 +174,6 @@ module.exports = {
     sendRegCode,
     greetMail,
     sendVco,
-    sendNewMember
+    sendNewMember,
+    resetPasswordMail
 }

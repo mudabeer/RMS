@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser')
 const connectDB = require('./db/db')
 const authRouter = require('./routes/auth')
 const roomRouter = require('./routes/room')
+const transRouter = require('./routes/transaction')
 
 const errorHandler = require('./meddlewares/error-handler')
 
@@ -18,6 +19,7 @@ app.use(cookieParser())
 
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/room',roomRouter)
+app.use('/api/v1/transaction',transRouter)
 
 app.use(errorHandler)
 
