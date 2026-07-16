@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const cookieParser = require('cookie-parser')
-
+const cors = require('cors');
 
 const connectDB = require('./db/db')
 const authRouter = require('./routes/auth')
@@ -16,6 +16,12 @@ const errorHandler = require('./meddlewares/error-handler')
 //middlewares
 app.use(express.json())
 app.use(cookieParser())
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/room',roomRouter)

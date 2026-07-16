@@ -22,7 +22,10 @@ const updateMember = async (req,res) => {
 
     await req.room.save()
 
-    res.status(StatusCodes.OK).json({'msg':'member updated'})
+    res.status(StatusCodes.OK).json({
+        success: true,    
+        'msg':'member updated'
+    })
 }
 
 const deleteMember = async (req,res) => {
@@ -35,7 +38,10 @@ const deleteMember = async (req,res) => {
 
     await req.room.save()
 
-    res.status(StatusCodes.OK).json({'msg':"member deleted"})
+    res.status(StatusCodes.NO_CONTENT).json({
+        success: true,
+        'msg':"member deleted"
+    })
 
 }
 

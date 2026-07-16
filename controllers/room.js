@@ -58,10 +58,21 @@ const getRooms = async (req,res) => {
     const totalRooms = await Room.countDocuments(queryObject);
     const numOfPages = Math.ceil(totalRooms / limit)
 
-    res.status(StatusCodes.OK).json({rooms,totalRooms,numOfPages})
+    res.status(StatusCodes.OK).json({
+        success:true,
+        data:{
+        rooms,
+        totalRooms,
+        numOfPages},
+        msg:"found data"
+    })
 }
 const getSingleRoom = async (req,res) => {
-    res.status(StatusCodes.OK).json({room:req.room})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        data:req.room,
+        msg:"found room"
+    })
 }
 
 const genVco = async (req,res) => {
@@ -101,7 +112,10 @@ const genVco = async (req,res) => {
 
     await sendVco(creator.email,creator.name,code)
 
-    res.status(StatusCodes.OK).json({msg:'verification code successfully send to creator of room!!'})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg:'verification code successfully send to creator of room!!'
+    })
 }
 
 const joinRoom = async (req,res) => {
@@ -163,7 +177,11 @@ const createRoom = async (req,res) => {
         }]
     })
     
-    res.send('Create Room')
+    res.status(StatusCodes.CREATED).json({
+        success:true,
+         data:room,
+         msg: "room created"
+        })
 }
 
 const updateRoom = async (req,res) => {
@@ -179,7 +197,10 @@ const updateRoom = async (req,res) => {
 
     await req.room.save()
 
-    res.status(StatusCodes.OK).json({"msg":'room updated'})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        "msg":'room updated'
+    })
 }
 
 const deleteRoom = async (req,res) => {
@@ -189,11 +210,14 @@ const deleteRoom = async (req,res) => {
 
     const room = await Room.deleteOne({_id:roomId})
 
-    if(!room){
+    if(room.deletedCount === 0){
         throw new NotFoundError('room not found')
     }
 
-    res.status(StatusCodes.OK).json({'msg':'room deleted successfuly'})
+    res.status(StatusCodes.NO_CONTENT).json({
+        success: true,
+        'msg':'room deleted successfuly'
+    })
 }
 
 module.exports = {

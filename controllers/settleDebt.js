@@ -27,6 +27,10 @@ const updateDebtPayment = async (req,res) => {
 
     const dueAmount = member.debtAmount - member.paidAmount   
 
+    if (payment > dueAmount) {
+        throw new BadRequestError('payment exceeds due amount');
+    }
+
     const status = Number(dueAmount) === Number(payment) ? 'Paid' : 'Partial'
 
     member.paidAmount = Number(member.paidAmount) + Number(payment)
@@ -40,7 +44,10 @@ const updateDebtPayment = async (req,res) => {
 
     await req.transaction.save()
 
-    res.status(StatusCodes).json({"msg":"updated debt"})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        "msg":"updated debt"
+    })
 }
 
 module.exports = {updateDebtPayment}

@@ -57,7 +57,10 @@ const sendCode = async (req,res) => {
 
     await sendRegCode(email,otp)
     
-    res.status(StatusCodes.OK).json({msg:'verification code sent!',otp:result})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        msg:'verification code sent!'
+    })
 }
 
 
@@ -86,6 +89,8 @@ const register = async (req,res) => {
         throw new BadRequestError('invalid OTP')
     }
 
+    await Otp.deleteOne({email});
+
     const user = await User.create({
         name,
         email,
@@ -94,7 +99,10 @@ const register = async (req,res) => {
 
     await greetMail(email,name)
 
-    res.status(StatusCodes.OK).json({msg:'register successfully!!'})
+    res.status(StatusCodes.CREATED).json({
+        success: true,
+        msg:'register successfully!!'
+    })
 
 }
 
@@ -127,7 +135,10 @@ const forgotPassword = async (req,res) => {
 
     await resetPasswordMail(resetLink,email)
 
-    res.status(StatusCodes.OK).json({'msg':'password reset link sent to email'})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        'msg':'password reset link sent to email'
+    })
 }
 
 const resetPassword = async (req,res) => {
@@ -148,10 +159,16 @@ const resetPassword = async (req,res) => {
         throw new BadRequestError('please provide newpassword')
     }
 
+    user.passwordResetExpires = undefined
+    user.passwordResetToken = undefined
+
     user.password = newPassword
     await user.save()
 
-    res.status(StatusCodes.OK).json({'msg':"password reset successfull"})
+    res.status(StatusCodes.OK).json({
+        "success":true,
+        'msg':"password reset successfull"
+    })
 }
 
 const login = async (req,res) => {
@@ -182,7 +199,10 @@ const login = async (req,res) => {
     attachRefreshToken(res, refreshToken)
     attachAccessToken(res, accessToken)
 
-    res.status(StatusCodes.OK).json({msg:'login successfully!!'})
+    res.status(StatusCodes.OK).json({
+        success:true,
+        msg:'login successfully!!'
+    })
 }
 
 const refresh = async (req,res) => {
@@ -216,7 +236,10 @@ const refresh = async (req,res) => {
 
         attachAccessToken(res,accessToken)
 
-        res.status(StatusCodes.OK).json('refresh success!!')
+        res.status(StatusCodes.OK).json({
+            success:true,
+            "msg":'refresh success!!'
+        })
     } catch (error) {
         console.log(error)
         throw new UnauthenticatedError('invalid refresh token')
@@ -236,7 +259,10 @@ const logout = async (req,res) => {
         httpOnly: true,
     });
 
-    res.status(StatusCodes.OK).json({'msg':'logout successfull!!'})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        'msg':'logout successfull!!'
+    })
 }
 
 module.exports = {

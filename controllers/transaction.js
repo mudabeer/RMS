@@ -57,11 +57,18 @@ const createTrans = async (req,res) =>{
             splitAmong
         })
 
-    res.status(StatusCodes.OK).json({'msg':'created transaction'})
+    res.status(StatusCodes.CREATED).json({
+        success: true,
+        'msg':'created transaction'
+    })
 }
 
 const getSingleTrans = async (req,res) =>{
-    res.status(StatusCodes.OK).json({transaction:req.transaction})
+    res.status(StatusCodes.CREATED).json({
+        success: true,
+        data:req.transaction,
+        msg:"found transaction"
+    })
 }
 
 const getAllTrans = async (req,res) =>{
@@ -164,7 +171,12 @@ const getAllTrans = async (req,res) =>{
     const totaltransactionss = await Transaction.countDocuments(queryObject);
     const numOfPages = Math.ceil(totaltransactionss / limit)
     
-    res.status(StatusCodes.OK).json({transactions,totaltransactionss,numOfPages})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        data: {
+        transactions,totaltransactionss,numOfPages},
+        msg: "matching transactions"
+    })
 }
 
 const updateTrans = async (req,res) =>{
@@ -196,7 +208,10 @@ const updateTrans = async (req,res) =>{
 
     await req.transaction.save()
 
-    res.json({'msg':'update transaction'})
+    res.status(StatusCodes.OK).json({
+        success: true,
+        'msg':'update transaction'
+    })
 }
 
 const deleteTrans = async (req,res) => {
@@ -220,7 +235,10 @@ const deleteTrans = async (req,res) => {
         throw new NotFoundError('transaction not found')
     }
 
-    res.status(StatusCodes.OK).json({'msg':"deleted transaction"})
+    res.status(StatusCodes.NO_CONTENT).json({
+        success: true,
+        'msg':"deleted transaction"
+    })
 }
 
 module.exports = {
