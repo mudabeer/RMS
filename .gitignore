@@ -1,2 +1,20 @@
-node_modules
-.env
+# Backend
+backend/node_modules/
+backend/dist/
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

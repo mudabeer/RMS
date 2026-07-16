@@ -4,18 +4,7 @@ const cookie = require('cookie-parser')
 const {UnauthenticatedError} = require('../errors/index')
 
 const auth = async (req,res,next) => {
-    // const token = req.cookies.accessToken
-
-    const authHeader = req.headers.authorization
-
-    console.log(authHeader);
-    
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthenticatedError('No token provided')
-    }
-
-    const token = authHeader.split(' ')[1]
+    const token = req.cookies.accessToken
 
     if(!token){
         throw new UnauthenticatedError('invalid token')
