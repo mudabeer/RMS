@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
+
 function LandingHeader() {
+  const navigate = useNavigate();
   return (
-    <header  className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md shadow-sm flex justify-between items-center px-container-margin h-16 border-b border-outline-variant/10">
+    <header className="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md shadow-sm flex justify-between items-center px-container-margin h-16 border-b border-outline-variant/10">
       <div className="flex items-center gap-sm">
         <span
           className="material-symbols-outlined text-primary dark:text-primary-fixed-dim"
@@ -33,7 +36,12 @@ function LandingHeader() {
         >
           How it Works
         </a>
-        <button className="h-10 px-6 bg-primary text-on-primary rounded-[12px] font-label-md text-label-md btn-press transition-all shadow-level-1 tactile-widget">
+        <button
+          className="h-10 px-6 bg-primary text-on-primary rounded-[12px] font-label-md text-label-md btn-press transition-all shadow-level-1 tactile-widget"
+          onClick={() => {
+            navigate("/sendotp");
+          }}
+        >
           Get Started
         </button>
       </nav>

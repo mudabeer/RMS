@@ -11,20 +11,20 @@ function Registrationform() {
     otp: Array(6).fill(''),
   });
   const [errors, setErrors] = useState("");
-  const [reponseErrors, setResponseErrors] = useState("");
+  const [responseError, setResponseErrors] = useState("");
   const navigate = useNavigate()
 
   const submitForm = async () =>{
     console.log(userData);
     try{
-      const reponse = await axios.post('http://localhost:3000/api/v1/auth/register',
+      const response = await axios.post('http://localhost:3000/api/v1/auth/register',
       {
         name:userData.name,
         email:userData.email,
         password:userData.password,
         otp: userData.otp.join('')
       })
-      if(reponse.data.success){
+      if(response.data.success){
         navigate('/dashboard');
       }
       else{
@@ -93,7 +93,7 @@ function Registrationform() {
         </p>
       </div>
       <form className="space-y-md" onSubmit={handleSubmit}>
-        {reponseErrors && (
+        {responseError && (
           <div className="p-sm rounded-lg bg-error-container border border-error flex items-center gap-xs mb-md">
             <span
               className="material-symbols-outlined text-error"
@@ -102,7 +102,7 @@ function Registrationform() {
               error
             </span>
             <p className="text-label-sm text-on-error-container">
-              {reponseErrors}
+              {responseError}
             </p>
           </div>
         )}
