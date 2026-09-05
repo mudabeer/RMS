@@ -218,7 +218,6 @@ The server listens on `PORT` (defaults to `3000`) and expects a running MongoDB 
 Documented honestly, based on what's in the code today:
 
 - **Access-token mismatch:** Login/refresh attach `accessToken` and `refreshToken` as `httpOnly` cookies (`backend/utils/cookies.js`), but `backend/meddlewares/authentication.js` only reads the access token from an `Authorization: Bearer <token>` header (the cookie-reading line is present but commented out). As written, a browser-based frontend using the cookies set at login has no way to retrieve the token to send it as a header — this needs to be reconciled before protected routes work end-to-end.
-- **Custom split doesn't actually customize amounts** — see [FEATURES.md](./FEATURES.md#custom-expense-splitting).
 - **Transaction deletion is over-blocked** by a logic bug in `deleteTrans` — see [FEATURES.md](./FEATURES.md#deleting-a-transaction).
 - **`JWT_REHRESH_SECRET` is misspelled** consistently throughout the code (see Environment Variables above).
 - **Email config typo:** `backend/config/email.js` sets `host: 'stmp.gmail.cpm'` (should be `smtp.gmail.com`), though this particular field is unused in practice because the transporter is created with `service: 'gmail'`, which ignores the `host`/`port` options.

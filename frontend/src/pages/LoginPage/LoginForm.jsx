@@ -2,13 +2,11 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function Registrationform() {
-  const [passwordVisibility, setPasswordVisibility] = useState(false);
+function LoginForm (){
+    const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [userData, setUserData] = useState({
-    name: "",
     email: "",
     password: "",
-    otp: Array(6).fill(""),
   });
   const [errors, setErrors] = useState("");
   const [responseError, setResponseErrors] = useState("");
@@ -18,12 +16,9 @@ function Registrationform() {
     console.log(userData);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/register",
+        "http://localhost:3000/api/v1/auth/login",
         {
-          name: userData.name,
-          email: userData.email,
-          password: userData.password,
-          otp: userData.otp.join(""),
+          ...userData
         },
       );
       if (response.data.success) {
@@ -37,53 +32,27 @@ function Registrationform() {
     }
   };
 
-  const inputRefs = useRef([]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
 
-  const handleChangeOtp = (e, index) => {
-    const value = e.target.value;
-    if (value.length > 1) return;
-    const newOtp = [...userData.otp];
-    newOtp[index] = value;
-    setUserData({ ...userData, otp: [...newOtp] });
-  };
-
-  const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !userData.otp[index] && index > 0) {
-      inputRefs.current[index - 1].focus();
-    }
-  };
-  const handleKeyUp = (e, index) => {
-    if (e.key.length === 1 && index < 5) {
-      inputRefs.current[index + 1].focus();
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!userData.name) newErrors.name = "name is required";
     if (!userData.email.includes("@")) newErrors.email = " invalid email";
     if (!userData.password) newErrors.password = "password is required";
-    if (userData.otp.some((value) => value === "")) {
-      newErrors.otp = "OTP is required";
-    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
       await submitForm();
-      console.log("successfully");
     }
   };
 
   return (
     <>
-      <form className="space-y-md" onSubmit={handleSubmit}>
+      <form className="space-y-md " onSubmit={handleSubmit}>
         {responseError && (
           <div className="p-sm rounded-lg bg-error-container border border-error flex items-center gap-xs mb-md">
             <span
@@ -97,28 +66,6 @@ function Registrationform() {
             </p>
           </div>
         )}
-        {/* Full Name */}
-        <div>
-          <label
-            className="block font-label-md text-label-md text-on-surface mb-xs"
-            htmlFor="fullName"
-          >
-            Full Name
-          </label>
-          <div className="relative">
-            <input
-              className="w-full h-[48px] px-sm py-xs border border-outline-variant rounded-md bg-surface-container-lowest text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-              id="fullName"
-              placeholder="John Doe"
-              type="text"
-              name="name"
-              onChange={handleChange}
-            />
-          </div>
-          {errors.name && (
-            <p className="text-label-sm text-error mt-xs">{errors.name}</p>
-          )}
-        </div>
         {/* Email */}
         <div>
           <label
@@ -177,35 +124,6 @@ function Registrationform() {
             <p className="text-label-sm text-error mt-xs">{errors.password}</p>
           )}
         </div>
-        {/* OTP Verification */}
-        <div className="pt-sm border-t border-surface-variant mt-sm">
-          <label className="block font-label-md text-label-md text-on-surface mb-base">
-            Verify OTP
-          </label>
-          <p className="font-label-sm text-label-sm text-on-surface-variant mb-sm">
-            Sent to your email
-          </p>
-          <div className="flex justify-between gap-xs">
-            {userData.otp.map((digit, index) => {
-              return (
-                <input
-                  key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  className="w-full h-[48px] text-center rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-surface-container-lowest text-on-surface font-headline-md text-headline-md"
-                  maxLength="1"
-                  placeholder="-"
-                  type="text"
-                  onChange={(e) => handleChangeOtp(e, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  onKeyUp={(e) => handleKeyUp(e, index)}
-                />
-              );
-            })}
-          </div>
-          {errors.otp && (
-            <p className="text-label-sm text-error mt-xs">{errors.otp}</p>
-          )}
-        </div>
         {/* Submit Button */}
         <div className="pt-sm mt-auto">
           <button
@@ -223,13 +141,13 @@ function Registrationform() {
         </div>
       </form>
       <p className="mt-md text-center font-body-md text-body-md text-on-surface-variant text-sm">
-        Already have an account?{" "}
-        <a className="text-primary font-medium hover:underline" href="/login">
-          Log in
+        Don't have an account?{" "}
+        <a className="text-primary font-medium hover:underline" href="/sendotp">
+          Sign up
         </a>
       </p>
     </>
   );
 }
 
-export default Registrationform;
+export default LoginForm

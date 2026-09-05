@@ -85,6 +85,21 @@ Relevant backend areas:
 - `backend/routes/transaction.js`
 - `backend/models/Transaction.js`
 
+### Expense splitting by member selection ("custom" split)
+
+A transaction's `splitType` controls who the expense is divided across:
+
+- `allRoomMember` — split evenly across every current member of the room.
+- `custom` — split evenly across a **specific, user-chosen subset** of members, rather than the whole room.
+
+```js
+const debtAmount = amount / (members.length)
+```
+
+(`backend/controllers/transaction.js`, `createTrans`)
+
+In both cases the division is equal — `custom` here means "you choose *who's* included," not "you choose a different dollar amount per person." That's the intended behavior: the UI lets a user pick which members are part of the expense, and the amount is split evenly among just that selection. Assigning a different amount to each individual member is not supported (see [Incomplete](#incomplete) below if that's ever wanted as a separate feature).
+
 ### Debt tracking with partial payments
 
 Every transaction stores a `splitAmong` list — one entry per member, each with `debtAmount`, `paidAmount`, and a `status` of `Pending`, `Partial`, or `Paid`.
@@ -105,21 +120,9 @@ Relevant backend areas:
 
 ## Incomplete
 
-### Custom expense splitting
+### Per-member custom amounts (not the same as "custom" split)
 
-The transaction API accepts a `splitType` of either `allRoomMember` (split across every current room member) or `custom` (split across a specific list of member IDs).
-
-**The problem:** even for `splitType: 'custom'`, the amount is still divided equally:
-
-```js
-const debtAmount = amount / (members.length)
-```
-
-(`backend/controllers/transaction.js`, `createTrans`)
-
-So "custom" splitting today only lets you **choose which members are included** — it does **not** let you assign different amounts to different members. To make this a true custom split, the endpoint would need to accept a per-member amount (or percentage) and validate that they sum to the total.
-
-**Status: Incomplete — do not rely on this for genuinely unequal splits.**
+There's currently no way to assign a different amount to each member of a split — every split (`allRoomMember` or `custom`) divides the total evenly across whoever is included. If unequal, per-person amounts are ever wanted as a feature, the `createTrans` endpoint would need to accept a per-member amount (or percentage) and validate that they sum to the total. This is a distinct, not-yet-planned feature — see [Expense splitting by member selection](#expense-splitting-by-member-selection-custom-split) above for what "custom" currently does.
 
 ### Deleting a transaction
 
@@ -141,7 +144,7 @@ The backend API above exists and works (aside from the two items already noted),
 - "Send OTP" step of registration — wired to the backend.
 - "Register" step (with OTP entry) — wired to the backend, but it navigates to `/dashboard` on success, and no `/dashboard` route or page exists yet.
 - Login page — the file (`frontend/src/pages/LoginPage/LoginPage.jsx`) exists but is currently empty.
-- There is no frontend UI at all yet for rooms, joining a room, members, transactions, expense splitting, or debt/payment tracking.
+- There is no frontend UI at all yet for rooms, joining a room, members, transactions (including choosing a custom split), or debt/payment tracking.
 
 See [FRONTEND.md](./FRONTEND.md#known-frontend-limitations) for details.
 

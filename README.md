@@ -17,10 +17,10 @@ Verified against the current codebase:
 - Room joining via a room code + an email verification step
 - Room members with roles (`creator`, `admin`, `member`)
 - Shared expenses/transactions with title, amount, category, and payer
-- Expense splitting across room members (currently always equal-split — see [docs/FEATURES.md](./docs/FEATURES.md#custom-expense-splitting))
+- Expense splitting: split evenly across the whole room, or across a custom, user-chosen subset of members (splits are always even — see [docs/FEATURES.md](./docs/FEATURES.md#expense-splitting-by-member-selection-custom-split))
 - Debt tracking with support for partial payments and an automatic `Paid` status
 
-**Not yet implemented:** a working login screen, a dashboard, and any UI for rooms/expenses/debts on the frontend; true custom (non-equal) expense splitting; chore management (this appears only as marketing copy on the landing page — see [docs/FEATURES.md](./docs/FEATURES.md#planned)).
+**Not yet implemented:** a working login screen, a dashboard, and any UI for rooms/expenses/debts on the frontend; per-member custom dollar amounts within a split; chore management (this appears only as marketing copy on the landing page — see [docs/FEATURES.md](./docs/FEATURES.md#planned)).
 
 ## Tech Stack
 
