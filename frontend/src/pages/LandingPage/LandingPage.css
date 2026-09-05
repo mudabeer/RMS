@@ -1,0 +1,57 @@
+/* Level 1 Shadow */
+.shadow-level-1 {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.09);
+}
+
+/* Button Press Effect */
+.btn-press:active {
+  box-shadow: 0px 2px 4px rgba(30, 41, 59, 0.05);
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Tactile Interactivity */
+.tactile-widget {
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tactile-widget:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.tactile-widget:active {
+  transform: scale(0.95);
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+body {
+      min-height: max(884px, 100dvh);
+    }
+    #shader-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -2;
+    }
