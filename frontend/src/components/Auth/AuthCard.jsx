@@ -2,7 +2,7 @@ import './AuthCard.css'
 
 function AuthCard({childern,title,description}) {
     return (
-        <div className="w-full md:w-1/2 auth-card p-lg md:p-[48px] max-w-[480px] mx-auto md:max-w-none">
+        <div className="w-full md:w-1/2 auth-card p-lg md:p-[48px] max-w-[480px] mx-auto md:max-w-none mt-4">
       <div className="mb-lg">
         <h2 className="font-headline-lg text-headline-lg text-on-surface mb-xs">
           {title}

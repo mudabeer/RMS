@@ -1,5 +1,5 @@
 import RegistrationForm from "./RegistrationForm"
-import AuhtPage from "../../components/Auth/Authpage"
+import AuhtPage from "../../components/Auth/AuthPage"
 
 function RegistrationPage(){
     const childern = <RegistrationForm />
