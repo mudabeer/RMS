@@ -1,15 +1,20 @@
 import RegistrationForm from "./RegistrationForm"
-import BrandingHeadline from './BrandingHeadline'
-import './RegistrationPage.css'
+import AuhtPage from "../../components/Auth/Authpage"
 
 function RegistrationPage(){
+    const childern = <RegistrationForm />
+    const title = "Sign Up"
+    const description = "Create an account to get started."
+    const brandingTitle = ["Fast, Efficient","and Productive"]
+    const brandingDescription = "Streamline your shared living experience today."
     return (
-        <div className="font-body-md text-on-surface antialiased w-full min-h-screen">
-        <div className="w-full max-w-[1100px] flex flex-col md:flex-row relative z-10 p-md lg:p-xl gap-xl items-center mx-auto px-container-margin md:px-lg py-lg">
-        <BrandingHeadline />
-        <RegistrationForm />
-        </div>
-        </div>
+        <AuhtPage 
+        childern={childern}
+        title={title}
+        description={description}
+        brandingDescription={brandingDescription}
+        brandingTitle={brandingTitle}
+        />
     )
 }
 

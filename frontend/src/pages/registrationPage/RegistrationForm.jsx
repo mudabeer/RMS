@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Registrationform() {
@@ -8,37 +8,36 @@ function Registrationform() {
     name: "",
     email: "",
     password: "",
-    otp: Array(6).fill(''),
+    otp: Array(6).fill(""),
   });
   const [errors, setErrors] = useState("");
   const [responseError, setResponseErrors] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const submitForm = async () =>{
+  const submitForm = async () => {
     console.log(userData);
-    try{
-      const response = await axios.post('http://localhost:3000/api/v1/auth/register',
-      {
-        name:userData.name,
-        email:userData.email,
-        password:userData.password,
-        otp: userData.otp.join('')
-      })
-      if(response.data.success){
-        navigate('/dashboard');
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/auth/register",
+        {
+          name: userData.name,
+          email: userData.email,
+          password: userData.password,
+          otp: userData.otp.join(""),
+        },
+      );
+      if (response.data.success) {
+        navigate("/dashboard");
+      } else {
+        setResponseErrors("same thing went wrong try later");
       }
-      else{
-        setResponseErrors('same thing went wrong try later')
-      }
-    } catch(error){
-      console.log(error.response.data)
+    } catch (error) {
+      console.log(error.response.data);
       setResponseErrors(error.response.data.msg);
     }
-  }
+  };
 
   const inputRefs = useRef([]);
-
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,7 +63,7 @@ function Registrationform() {
     }
   };
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
     if (!userData.name) newErrors.name = "name is required";
@@ -77,21 +76,13 @@ function Registrationform() {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      await submitForm()
+      await submitForm();
       console.log("successfully");
     }
   };
 
   return (
-    <div className="w-full md:w-1/2 inner-form-card p-lg md:p-[48px] max-w-[480px] mx-auto md:max-w-none">
-      <div className="mb-lg">
-        <h2 className="font-headline-lg text-headline-lg text-on-surface mb-xs">
-          Sign Up
-        </h2>
-        <p className="font-body-md text-body-md text-on-surface-variant">
-          Create an account to get started.
-        </p>
-      </div>
+    <>
       <form className="space-y-md" onSubmit={handleSubmit}>
         {responseError && (
           <div className="p-sm rounded-lg bg-error-container border border-error flex items-center gap-xs mb-md">
@@ -237,7 +228,7 @@ function Registrationform() {
           Log in
         </a>
       </p>
-    </div>
+    </>
   );
 }
 
