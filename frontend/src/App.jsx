@@ -3,6 +3,7 @@ import { LandingPage } from "./pages/LandingPage/LandingPage.jsx"
 import RegistrationPage from "./pages/registrationPage/RegistrationPage.jsx"
 import SendOtpPage from "./pages/SendOtpPage/SendOtpPage.jsx"
 import LoginPage from "./pages/LoginPage/LoginPage.jsx"
+import DashboardPage from "./pages/DashboardPage/DashboardPage.jsx"
 
 export default function App(){
     return (
@@ -11,6 +12,7 @@ export default function App(){
             <Route path="/register" element={<RegistrationPage />}/>
             <Route path="/sendotp" element={<SendOtpPage />}/>
             <Route path="/login" element={<LoginPage />}/>
+            <Route path="/Dashboard" element={<DashboardPage />}/>
         </Routes>
     )
 }
