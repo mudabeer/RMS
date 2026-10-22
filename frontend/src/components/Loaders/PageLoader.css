@@ -1,0 +1,7 @@
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-spin-smooth {
+    animation-duration: 2.5s;
+    }
+}
+

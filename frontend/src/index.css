@@ -116,6 +116,37 @@
   --text-headline-lg-mobile--font-weight: 600;
   --text-headline-md--font-weight: 600;
   --text-label-md--font-weight: 500;
+
+  --color-brand-50: #e6f7f5;
+  --color-brand-100: #cdedea;
+  --color-brand-200: #9bded6;
+  --color-brand-500: #00a395;
+  --color-brand-600: #00857a;
+  --color-brand-700: #00685f;
+  --color-brand-800: #004d40;
+  --color-brand-900: #003732;
+  --color-brand-accent: #00f5e6;
+  --color-brand-amber: #f59e0b;
+  --font-sans: Inter, sans-serif;
+
+  --animate-shimmer: shimmer 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-spin-smooth: spinFast 0.85s linear infinite;
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes spinFast {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 }
 
 .material-symbols-outlined {
@@ -126,6 +157,7 @@
     "opsz" 24;
 }
 
-#app {
+body, html, #app {
   min-width: 100%;
+  min-height: 100dvh;
 }

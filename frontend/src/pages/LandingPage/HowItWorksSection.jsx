@@ -1,4 +1,4 @@
-import Steps from "./steps";
+import Steps from "./Steps";
 
 const howItWorksSteps = [
     {

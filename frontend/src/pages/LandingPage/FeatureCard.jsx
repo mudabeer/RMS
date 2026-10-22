@@ -1,4 +1,4 @@
-function FeaturesCard({
+function FeatureCard({
   icon,
   title,
   description,
@@ -22,4 +22,4 @@ function FeaturesCard({
   );
 }
 
-export default FeaturesCard
+export default FeatureCard

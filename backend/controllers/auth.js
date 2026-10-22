@@ -173,9 +173,8 @@ const resetPassword = async (req,res) => {
 
 const login = async (req,res) => {
     const {email,password} = req.body
-
     const user = await User.findOne({email})
-
+    
     if(!user){
         throw new NotFoundError('account does not exist')
     }
@@ -247,8 +246,6 @@ const refresh = async (req,res) => {
 }
 
 const logout = async (req,res) => {
-    console.log(req.user);
-    
     await RefreshToken.deleteOne({user:req.user.userId})
 
     res.clearCookie('refreshToken', {

@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function LoginForm (){
-    const [passwordVisibility, setPasswordVisibility] = useState(false);
+function LoginForm() {
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -13,12 +13,14 @@ function LoginForm (){
   const navigate = useNavigate();
 
   const submitForm = async () => {
-    console.log(userData);
     try {
       const response = await axios.post(
         "http://localhost:3000/api/v1/auth/login",
         {
-          ...userData
+          ...userData,
+        },
+        {
+          withCredentials: true,
         },
       );
       if (response.data.success) {
@@ -127,7 +129,7 @@ function LoginForm (){
         {/* Submit Button */}
         <div className="pt-sm mt-auto">
           <button
-            className="w-full h-[48px] bg-primary text-on-primary rounded-md font-label-md text-label-md flex justify-center items-center gap-sm hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-[0.98]"
+            className="w-fu ll h-[48px] bg-primary text-on-primary rounded-md font-label-md text-label-md flex justify-center items-center gap-sm hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-[0.98]"
             type="submit"
           >
             Create Account
@@ -150,4 +152,4 @@ function LoginForm (){
   );
 }
 
-export default LoginForm
+export default LoginForm;
