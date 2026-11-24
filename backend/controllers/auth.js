@@ -26,6 +26,7 @@ const {BadRequestError,
     UnauthenticatedError
 } = require('../errors/index')
 const { transporter } = require('../config/email')
+const { log } = require('console')
 
 
 const sendCode = async (req,res) => {
@@ -196,17 +197,19 @@ const login = async (req,res) => {
     })
 
     attachRefreshToken(res, refreshToken)
-    attachAccessToken(res, accessToken)
 
     res.status(StatusCodes.OK).json({
-        success:true,
-        msg:'login successfully!!'
+        accessToken,
+        "success":true,
+        "user":{
+            "id":user._id,
+            "name":user.name
+        }
     })
 }
 
 const refresh = async (req,res) => {
     const refreshToken = req.cookies.refreshToken
-
     if(!refreshToken){
         throw new UnauthenticatedError('refresh token missing')
     }
@@ -216,10 +219,13 @@ const refresh = async (req,res) => {
             refreshToken,
             process.env.JWT_REHRESH_SECRET
         )
-
+        
+        
         const tokenDoc = await RefreshToken.findOne({
             user: playload.userId
         })
+
+        
 
         if(!tokenDoc){
             throw new UnauthenticatedError('invalid refresh token')
@@ -232,15 +238,15 @@ const refresh = async (req,res) => {
         const user = await User.findOne({_id:playload.userId})
 
         const accessToken = await user.creatAccessToken()
-
-        attachAccessToken(res,accessToken)
-
+        
         res.status(StatusCodes.OK).json({
-            success:true,
-            "msg":'refresh success!!'
-        })
+        accessToken,
+        "user":{
+            "id":user._id,
+            "name":user.name
+        }
+    })
     } catch (error) {
-        console.log(error)
         throw new UnauthenticatedError('invalid refresh token')
     }
 }

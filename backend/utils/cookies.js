@@ -1,14 +1,5 @@
 const RefreshToken = require("../models/RefreshToken")
 
-const attachAccessToken = (res,accessToken) => {
-    res.cookie('accessToken', accessToken,{
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 15 * 60 * 1000
-    })
-}
-
 const attachRefreshToken = (res,refreshToken) => {
     res.cookie('refreshToken',refreshToken, {
             httpOnly: true,
@@ -19,6 +10,5 @@ const attachRefreshToken = (res,refreshToken) => {
 }
 
 module.exports = {
-    attachAccessToken,
     attachRefreshToken
 }

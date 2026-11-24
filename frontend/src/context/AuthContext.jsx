@@ -1,0 +1,65 @@
+import {useContext,createContext,useState,useEffect} from 'react'
+import refreshAxios from '../api/refreshAxios';
+import { tokenStore } from '../api/tokenStore';
+
+const AuthContext = createContext(null)
+
+export default function AuthProvider({children}){
+    const [accessToken, setAccessToken] = useState(null);
+    const [user, setUser] = useState(null);
+    const [loading, setloading] = useState(true);
+
+    useEffect(() => {
+        const restoreSession = async () => {
+            try {
+                const response = await refreshAxios.post("auth/refresh")
+                tokenStore.set(response.data.accessToken);
+                setAccessToken(response.data.accessToken);
+                setUser(response.data.user);
+                
+            }catch{
+                setAccessToken(null)
+                setUser(null)
+            }finally{
+                setloading(false)
+            }
+        }
+
+        restoreSession()
+    }, [])
+
+    const login = (token, userData) => {
+        setAccessToken(token);
+        setUser(userData);
+    }
+
+    const logout = () => {
+        setAccessToken(null);
+        setUser(null);
+    }
+
+    const value = {
+        accessToken,
+        user,
+        loading,
+        isAuthenticated: !!accessToken,
+        login,
+        logout
+    }
+
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    )
+}
+
+export function useAuth(){
+    const context = useContext(AuthContext);
+
+    if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+    }
+
+    return context;
+}

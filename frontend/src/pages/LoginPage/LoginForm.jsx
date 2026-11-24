@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
+import { tokenStore } from "../../api/tokenStore";
 
 function LoginForm() {
   const [passwordVisibility, setPasswordVisibility] = useState(false);
@@ -8,22 +10,19 @@ function LoginForm() {
     email: "",
     password: "",
   });
+  const { login } = useAuth();
   const [errors, setErrors] = useState("");
   const [responseError, setResponseErrors] = useState("");
   const navigate = useNavigate();
 
   const submitForm = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/login",
-        {
-          ...userData,
-        },
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await api.post("auth/login", {
+        ...userData,
+      });
       if (response.data.success) {
+        tokenStore.set(response.data.accessToken);
+        login(response.data.accessToken, response.data.user);
         navigate("/dashboard");
       } else {
         setResponseErrors("same thing went wrong try later");
