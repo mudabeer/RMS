@@ -9,6 +9,7 @@ const {
     login,
     refresh,
     logout,
+    getProfile,
     resetPassword,
     forgotPassword
 } = require('../controllers/auth')
@@ -17,6 +18,7 @@ router.route('/send-code').post(sendCode)
 router.route('/register').post(register)
 router.route('/login').post(login)
 router.route('/logout').post(auth,logout)
+router.route('/profile').get(auth,getProfile)
 router.route('/refresh').post(refresh)
 router.route('/forgot-password').post(forgotPassword)
 router.route('/reset-password/:token').post(resetPassword)

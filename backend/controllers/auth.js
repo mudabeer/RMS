@@ -268,12 +268,30 @@ const logout = async (req,res) => {
     })
 }
 
+const getProfile = async (req, res) => {
+    const user = await User.findById(req.user.userId).select('_id name email');
+
+    if (!user) {
+        throw new NotFoundError('user not found');
+    }
+
+    res.status(StatusCodes.OK).json({
+        success: true,
+        data: {
+            id: user._id,
+            name: user.name,
+            email: user.email
+        }
+    });
+}
+
 module.exports = {
     sendCode,
     register,
     login,
     refresh,
     logout,
+    getProfile,
     forgotPassword,
     resetPassword
 }

@@ -1,12 +1,29 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
 
 function MainLayout() {
+  const navigate = useNavigate();
   const { accessToken, user, loading: authLoading } = useAuth();
   const [rooms, setRooms] = useState([]);
   const [roomsLoading, setRoomsLoading] = useState(true);
   const [roomsError, setRoomsError] = useState("");
+  const [dialog, setDialog] = useState(null);
+  const [roomName, setRoomName] = useState("");
+  const [roomCode, setRoomCode] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [joinStep, setJoinStep] = useState("room");
+  const [actionError, setActionError] = useState("");
+  const [actionMessage, setActionMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
+  const loadRooms = async () => {
+    const response = await api.get("/room");
+    setRooms(response.data?.data?.rooms ?? []);
+  };
+
   useEffect(() => {
     if (authLoading) return;
     if (!accessToken) {
@@ -19,8 +36,7 @@ function MainLayout() {
       setRoomsLoading(true);
       setRoomsError("");
       try {
-        const response = await api.get("/room");
-        setRooms(response.data?.data?.rooms ?? []);
+        await loadRooms();
       } catch (error) {
         setRoomsError(error.response?.data?.msg || "Unable to load your rooms.");
       } finally {
@@ -29,6 +45,82 @@ function MainLayout() {
     };
     fetchData();
   }, [accessToken, authLoading]);
+
+  const openDialog = (mode) => {
+    setDialog(mode);
+    setSelectedRoom(null);
+    setActionError("");
+    setActionMessage("");
+    setJoinStep("room");
+    setRoomName("");
+    setRoomCode("");
+    setVerificationCode("");
+  };
+
+  const closeDialog = () => {
+    setDialog(null);
+    setSelectedRoom(null);
+    setActionError("");
+    setActionMessage("");
+  };
+
+  const handleCreateRoom = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setActionError("");
+    try {
+      await api.post("/room", { roomName: roomName.trim() });
+      await loadRooms();
+      closeDialog();
+    } catch (error) {
+      setActionError(error.response?.data?.msg || "Unable to create the room.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleRequestInvite = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setActionError("");
+    try {
+      const response = await api.post("/room/gen-vco", { roomCode: roomCode.trim() });
+      setActionMessage(response.data?.msg || "A verification code was sent to the room creator.");
+      setJoinStep("verification");
+    } catch (error) {
+      setActionError(error.response?.data?.msg || "Unable to request a verification code.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleJoinRoom = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setActionError("");
+    try {
+      await api.patch("/room/join-room", { vco: verificationCode.trim() });
+      await loadRooms();
+      closeDialog();
+    } catch (error) {
+      setActionError(error.response?.data?.msg || "Unable to join the room.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const openRoom = async (room) => {
+    setActionError("");
+    try {
+      const response = await api.get(`/room/${room._id}`);
+      setSelectedRoom(response.data?.data ?? room);
+      setDialog("details");
+    } catch (error) {
+      setActionError(error.response?.data?.msg || "Unable to load room details.");
+      setSelectedRoom(room);
+      setDialog("details");
+    }
+  };
 
   return (
     <main className="flex-1 md:ml-64 h-full flex flex-col overflow-hidden">
@@ -86,8 +178,8 @@ function MainLayout() {
           </p>
         </section>
         {/* Quick Actions (Bento Style)*/}
-        <section className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-md">
-          <button className="bg-primary hover:bg-surface-tint text-on-primary rounded-xl p-lg shadow-sm flex flex-col items-start justify-between h-32 transition-all active:scale-95 group">
+        <section className="w-full max-w-[1200px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
+          <button onClick={() => openDialog("create")} className="w-full min-w-0 bg-primary hover:bg-surface-tint text-on-primary rounded-xl p-lg shadow-sm flex flex-col items-start justify-between h-32 transition-all active:scale-95 group">
             <div className="bg-on-primary/20 p-xs rounded-lg group-hover:bg-on-primary/30 transition-colors">
               <span
                 className="material-symbols-outlined text-on-primary"
@@ -100,7 +192,7 @@ function MainLayout() {
               + Create Room
             </span>
           </button>
-          <button className="bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col items-start justify-between h-32 transition-all active:scale-95 text-on-surface group">
+          <button onClick={() => openDialog("join")} className="w-full min-w-0 bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col items-start justify-between h-32 transition-all active:scale-95 text-on-surface group">
             <div className="bg-surface-variant p-xs rounded-lg group-hover:bg-surface-container-high transition-colors">
               <span
                 className="material-symbols-outlined text-primary"
@@ -113,7 +205,7 @@ function MainLayout() {
               Join Room
             </span>
           </button>
-          <button className="bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col items-start justify-between h-32 transition-all active:scale-95 text-on-surface group">
+          <button onClick={() => document.getElementById("my-rooms")?.scrollIntoView({ behavior: "smooth" })} className="w-full min-w-0 bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col items-start justify-between h-32 transition-all active:scale-95 text-on-surface group">
             <div className="bg-surface-variant p-xs rounded-lg group-hover:bg-surface-container-high transition-colors">
               <span
                 className="material-symbols-outlined text-primary"
@@ -133,7 +225,7 @@ function MainLayout() {
         ) : roomsError ? (
           <p role="alert" className="max-w-[1200px] mx-auto text-error">{roomsError}</p>
         ) : rooms.length === 0 ? (
-          <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-xl pb-xl">
+          <div id="my-rooms" className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-xl pb-xl">
             <div className="lg:col-span-3 space-y-md">
               <div className="flex justify-between items-end mb-md">
                 <div>
@@ -181,7 +273,7 @@ function MainLayout() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-primary hover:bg-surface-tint text-on-primary font-label-md text-label-md font-semibold px-6 py-3 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95">
+                  <button onClick={() => openDialog("create")} className="w-full sm:w-auto bg-primary hover:bg-surface-tint text-on-primary font-label-md text-label-md font-semibold px-6 py-3 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95">
                     <span
                       className="material-symbols-outlined text-xl"
                       data-icon="add"
@@ -190,7 +282,7 @@ function MainLayout() {
                     </span>
                     Create a Room
                   </button>
-                  <button className="w-full sm:w-auto bg-surface-container-lowest hover:bg-surface-container-low text-primary border border-outline-variant font-label-md text-label-md font-semibold px-6 py-3 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95">
+                  <button onClick={() => openDialog("join")} className="w-full sm:w-auto bg-surface-container-lowest hover:bg-surface-container-low text-primary border border-outline-variant font-label-md text-label-md font-semibold px-6 py-3 rounded-xl shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95">
                     <span
                       className="material-symbols-outlined text-xl"
                       data-icon="key"
@@ -226,7 +318,7 @@ function MainLayout() {
         ) : (
           <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-xl pb-xl">
             {/* My Rooms Column (Spans 2 on large screens)*/}
-            <div className="lg:col-span-3 space-y-md">
+            <div id="my-rooms" className="lg:col-span-3 space-y-md">
               <div className="flex justify-between items-end mb-md">
                 <h2 className="font-headline-lg text-headline-lg text-on-surface">
                   My Rooms
@@ -237,7 +329,7 @@ function MainLayout() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
-                {rooms.map((room) => <div key={room._id} className="bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-surface-variant flex flex-col h-full hover:shadow-md transition-shadow">
+                {rooms.map((room) => <button type="button" onClick={() => navigate(`/rooms/${room._id}`)} key={room._id} className="w-full bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-surface-variant flex flex-col h-full text-left hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-md">
                     <div className="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center">
                       <span
@@ -263,8 +355,8 @@ function MainLayout() {
                     </span>{" "}
                     {room.members?.length ?? 0} Members
                   </p>
-                  <div className="mt-auto pt-md border-t border-surface-variant">
-                    <button className="w-full text-center text-primary font-label-md text-label-md hover:bg-surface-container-low py-sm rounded-lg transition-colors flex items-center justify-center gap-xs">
+                  <div className="mt-auto w-full pt-md border-t border-surface-variant">
+                    <span className="w-full text-center text-primary font-label-md text-label-md hover:bg-surface-container-low py-sm rounded-lg transition-colors flex items-center justify-center gap-xs">
                       Open{" "}
                       <span
                         className="material-symbols-outlined text-sm"
@@ -272,13 +364,84 @@ function MainLayout() {
                       >
                         arrow_forward
                       </span>
-                    </button>
+                    </span>
                   </div>
-                </div>)}
+                </button>)}
               </div>
             </div>
             {/* Recent Activity Column*/}
             <div className="space-y-md"></div>
+          </div>
+        )}
+        {dialog && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget && !submitting) closeDialog();
+            }}
+          >
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="room-dialog-title"
+              className="w-full max-w-[32rem] rounded-2xl bg-surface-container-lowest p-6 shadow-xl"
+            >
+              <div className="mb-5 flex items-center justify-between gap-4">
+                <h2 id="room-dialog-title" className="font-headline-md text-headline-md font-semibold text-on-surface">
+                  {dialog === "create" ? "Create a room" : dialog === "join" ? "Join a room" : selectedRoom?.name || "Room details"}
+                </h2>
+                <button type="button" onClick={closeDialog} disabled={submitting} aria-label="Close dialog" className="rounded-lg p-2 text-on-surface-variant hover:bg-surface-container disabled:opacity-50">
+                  <span className="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              {dialog === "create" && (
+                <form onSubmit={handleCreateRoom} className="space-y-4">
+                  <label className="block text-sm font-medium text-on-surface" htmlFor="room-name">Room name</label>
+                  <input id="room-name" autoFocus required maxLength={80} value={roomName} onChange={(event) => setRoomName(event.target.value)} placeholder="e.g. Greenview Flat" className="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3 text-on-surface outline-none focus:border-primary" />
+                  {actionError && <p role="alert" className="text-sm text-error">{actionError}</p>}
+                  <button disabled={submitting} className="w-full rounded-lg bg-primary px-4 py-3 font-semibold text-on-primary hover:bg-surface-tint disabled:opacity-60">
+                    {submitting ? "Creating…" : "Create room"}
+                  </button>
+                </form>
+              )}
+
+              {dialog === "join" && (joinStep === "room" ? (
+                <form onSubmit={handleRequestInvite} className="space-y-4">
+                  <p className="text-sm text-on-surface-variant">Enter the room invite code. The room creator will receive a verification code to approve your request.</p>
+                  <label className="block text-sm font-medium text-on-surface" htmlFor="room-code">Room invite code</label>
+                  <input id="room-code" autoFocus required value={roomCode} onChange={(event) => setRoomCode(event.target.value)} placeholder="Enter invite code" className="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3 text-on-surface outline-none focus:border-primary" />
+                  {actionError && <p role="alert" className="text-sm text-error">{actionError}</p>}
+                  <button disabled={submitting} className="w-full rounded-lg bg-primary px-4 py-3 font-semibold text-on-primary hover:bg-surface-tint disabled:opacity-60">
+                    {submitting ? "Requesting…" : "Request to join"}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleJoinRoom} className="space-y-4">
+                  <p className="text-sm text-on-surface-variant">{actionMessage} Enter the verification code when you receive it.</p>
+                  <label className="block text-sm font-medium text-on-surface" htmlFor="verification-code">Verification code</label>
+                  <input id="verification-code" autoFocus required value={verificationCode} onChange={(event) => setVerificationCode(event.target.value)} placeholder="Enter verification code" className="w-full rounded-lg border border-outline-variant bg-surface px-4 py-3 text-on-surface outline-none focus:border-primary" />
+                  {actionError && <p role="alert" className="text-sm text-error">{actionError}</p>}
+                  <button disabled={submitting} className="w-full rounded-lg bg-primary px-4 py-3 font-semibold text-on-primary hover:bg-surface-tint disabled:opacity-60">
+                    {submitting ? "Joining…" : "Join room"}
+                  </button>
+                </form>
+              ))}
+
+              {dialog === "details" && selectedRoom && (
+                <div className="space-y-4">
+                  <p className="text-on-surface-variant">{selectedRoom.members?.length ?? 0} members</p>
+                  <div className="rounded-lg bg-surface-container p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-on-surface-variant">Invite code</p>
+                    <p className="mt-1 break-all font-mono text-lg text-on-surface">{selectedRoom.roomCode}</p>
+                  </div>
+                  {actionError && <p role="alert" className="text-sm text-error">{actionError}</p>}
+                  <button type="button" onClick={() => navigator.clipboard?.writeText(selectedRoom.roomCode)} className="w-full rounded-lg border border-outline-variant px-4 py-3 font-semibold text-primary hover:bg-surface-container">
+                    Copy invite code
+                  </button>
+                </div>
+              )}
+            </section>
           </div>
         )}
       </div>

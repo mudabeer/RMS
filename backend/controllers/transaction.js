@@ -51,6 +51,7 @@ const createTrans = async (req,res) =>{
         const transaction = await Transaction.create({
             title,
             amount,
+            category,
             roomId:req.params.roomId,
             shareAmount:debtAmount,
             paidBy:req.user.userId,
@@ -167,7 +168,9 @@ const getAllTrans = async (req,res) =>{
 
     result = result.skip(skip).limit(limit)
 
-    const transactions = await result;
+    const transactions = await result
+        .populate('paidBy', 'name')
+        .populate('splitAmong.userId', 'name');
     const totaltransactionss = await Transaction.countDocuments(queryObject);
     const numOfPages = Math.ceil(totaltransactionss / limit)
     

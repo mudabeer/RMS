@@ -7,6 +7,9 @@ const RegistrationPage= lazy(() => import("./pages/registrationPage/Registration
 const SendOtpPage= lazy(() => import("./pages/SendOtpPage/SendOtpPage.jsx"))
 const LoginPage= lazy(() => import("./pages/LoginPage/LoginPage.jsx"))
 const DashboardPage= lazy(() => import("./pages/DashboardPage/DashboardPage.jsx"))
+const MyRoomsPage= lazy(() => import("./pages/MyRoomsPage/MyRoomsPage.jsx"))
+const ProfilePage= lazy(() => import("./pages/ProfilePage/ProfilePage.jsx"))
+const RoomDetailsPage= lazy(() => import("./pages/RoomDetailsPage/RoomDetailsPage.jsx"))
 
 export default function App(){
     return (
@@ -20,6 +23,9 @@ export default function App(){
 
             <Route element={<ProtectedRoute/>}>
                 <Route path="/Dashboard" element={<DashboardPage />}/>
+                <Route path="/MyRooms" element={<MyRoomsPage />}/>
+                <Route path="/Profile" element={<ProfilePage />}/>
+                <Route path="/rooms/:roomId" element={<RoomDetailsPage />}/>
             </Route>
         </Routes>
     )

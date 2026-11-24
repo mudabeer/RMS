@@ -1,6 +1,7 @@
 import {useContext,createContext,useState,useEffect} from 'react'
 import refreshAxios from '../api/refreshAxios';
 import { tokenStore } from '../api/tokenStore';
+import api from '../api/axios';
 
 const AuthContext = createContext(null)
 
@@ -33,9 +34,16 @@ export default function AuthProvider({children}){
         setUser(userData);
     }
 
-    const logout = () => {
-        setAccessToken(null);
-        setUser(null);
+    const logout = async () => {
+        try {
+            await api.post('auth/logout');
+        } catch {
+            // Clear the local session even if the server is unreachable.
+        } finally {
+            tokenStore.set(null);
+            setAccessToken(null);
+            setUser(null);
+        }
     }
 
     const value = {
