@@ -1,7 +1,8 @@
 import {Routes, Route} from "react-router-dom"
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import GuestRoute from "./routes/GuestRoute.jsx";
+import PageLoader from "./components/Loaders/PageLoader.jsx";
 const LandingPage  = lazy(()=>import("./pages/LandingPage/LandingPage.jsx"))
 const RegistrationPage= lazy(() => import("./pages/registrationPage/RegistrationPage.jsx"))
 const SendOtpPage= lazy(() => import("./pages/SendOtpPage/SendOtpPage.jsx"))
@@ -13,6 +14,7 @@ const RoomDetailsPage= lazy(() => import("./pages/RoomDetailsPage/RoomDetailsPag
 
 export default function App(){
     return (
+        <Suspense fallback={<PageLoader />}>
         <Routes>
             <Route element={<GuestRoute/>}>
                 <Route index element={<LandingPage />}/>
@@ -28,5 +30,6 @@ export default function App(){
                 <Route path="/rooms/:roomId" element={<RoomDetailsPage />}/>
             </Route>
         </Routes>
+        </Suspense>
     )
 }

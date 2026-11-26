@@ -218,17 +218,16 @@ const updateTrans = async (req,res) =>{
 }
 
 const deleteTrans = async (req,res) => {
-    const check = req.transaction.splitAmong.find(
+    const hasSettledMember = req.transaction.splitAmong.some(
         m => {
-            console.log(m.userId !== req.transaction.paidBy);
-            
             if(m.userId.toString() !== req.transaction.paidBy.toString()){
-                return m.status === 'Paid' || 'Partial'
+                return m.status === 'Paid' || m.status === 'Partial'
             }
+            return false
         }
     )
 
-    if(check){
+    if(hasSettledMember){
         throw new BadRequestError('if any one\'s debt amount paid or partial can delete transaction')
     }
 

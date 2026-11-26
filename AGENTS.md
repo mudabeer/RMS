@@ -80,10 +80,10 @@ RMS/
 For full details on prioritized fixes and architectural enhancements, refer to [improvements.md](./improvements.md).
 
 ### P0 Critical Priorities
-- [ ] Fix static `Date.now()` evaluation bug in `backend/models/Vco.js`.
-- [ ] Fix truthy string operator precedence bug in `backend/controllers/transaction.js:deleteTrans`.
-- [ ] Enforce creditor authorization (BOLA defense) in `backend/controllers/settleDebt.js`.
-- [ ] Wrap lazy-loaded routes in `<Suspense>` in `frontend/src/App.jsx`.
-- [ ] Fix `tokenStore.set(null)` in `frontend/src/api/axios.js`.
-- [ ] Remove `body` flex styling from `frontend/src/components/Auth/AuthPage.css`.
+- [x] Fix static `Date.now()` evaluation bug in `backend/models/Vco.js`.
+- [x] Fix truthy string operator precedence bug in `backend/controllers/transaction.js:deleteTrans`.
+- [x] Enforce creditor authorization (BOLA defense) in `backend/controllers/settleDebt.js`.
+- [x] Wrap lazy-loaded routes in `<Suspense>` in `frontend/src/App.jsx`.
+- [x] Fix `tokenStore.set(null)` in `frontend/src/api/axios.js`.
+- [x] Remove `body` flex styling from `frontend/src/components/Auth/AuthPage.css`.
 

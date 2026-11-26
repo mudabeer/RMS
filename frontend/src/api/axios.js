@@ -52,7 +52,7 @@ api.interceptors.response.use(
         return api(originalRequest)
 
     }catch(refreshError){
-        tokenStore(null)
+        tokenStore.set(null)
         return Promise.reject(refreshError)
     }
     return Promise.reject(error);
