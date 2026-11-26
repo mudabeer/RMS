@@ -195,4 +195,36 @@ describe("Phase 3 — Frontend Foundation & Auth UI Tests", () => {
 
     expect(screen.getByText("Guest Login")).toBeInTheDocument();
   });
+
+  it("ProtectedRoute and GuestRoute render PageLoader while session is loading", () => {
+    useAuth.mockReturnValueOnce({ isAuthenticated: false, loading: true });
+
+    const { unmount } = render(
+      <MemoryRouter initialEntries={["/dashboard"]}>
+        <Routes>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<div>Private Dashboard</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByText(/loading rms workspace/i)).toBeInTheDocument();
+    unmount();
+
+    useAuth.mockReturnValueOnce({ isAuthenticated: false, loading: true });
+    render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <Routes>
+          <Route element={<GuestRoute />}>
+            <Route path="/login" element={<div>Guest Login</div>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(screen.getByText(/loading rms workspace/i)).toBeInTheDocument();
+  });
 });

@@ -18,21 +18,36 @@ export default function AuthProvider({children}){
             }
         });
 
+        const controller = new AbortController();
+        let active = true;
+
         const restoreSession = async () => {
             try {
-                const response = await refreshAxios.post("auth/refresh")
+                const response = await refreshAxios.post("auth/refresh", null, {
+                    signal: controller.signal,
+                });
+                if (!active) return;
                 tokenStore.set(response.data.accessToken);
                 setUser(response.data.user);
-            }catch{
+            } catch (err) {
+                if (!active || err?.code === "ERR_CANCELED" || err?.name === "CanceledError") {
+                    return;
+                }
                 tokenStore.set(null);
                 setUser(null);
-            }finally{
-                setloading(false)
+            } finally {
+                if (active) {
+                    setloading(false);
+                }
             }
         }
 
         restoreSession()
-        return unsubscribe;
+        return () => {
+            active = false;
+            controller.abort();
+            unsubscribe();
+        };
     }, [])
 
     const login = (token, userData) => {

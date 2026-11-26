@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Outlet } from "react-router-dom";
 import SideNavbar from "./SideNavbar";
 import BottomNav from "./BottomNav";
+import PageLoader from "../Loaders/PageLoader";
 
 function AppLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -37,7 +38,9 @@ function AppLayout() {
         </header>
 
         <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
 
