@@ -1,4 +1,4 @@
-body {
+.auth-page-container {
   background-color: #f0f3ff; /* surface-container-low */
   background-image:
     radial-gradient(at 0% 0%, hsla(190, 80%, 90%, 1) 0px, transparent 50%),

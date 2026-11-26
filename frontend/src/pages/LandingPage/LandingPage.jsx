@@ -3,11 +3,11 @@ import LandingHeader from "./LandingHeader";
 import ShaderBackground from "./ShaderBackground";
 import "./LandingPage.css";
 import FeaturesSection from "./FeaturesSection";
-import HowItWorksSection from "./HowitWorksSection";
+import HowItWorksSection from "./HowItWorksSection";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
 import HeroSection from "./HeroSection";
 
-export function LandingPage() {
+function LandingPage() {
 
   useScrollAnimation();
 
@@ -30,3 +30,5 @@ export function LandingPage() {
     </>
   );
 }
+
+export default LandingPage

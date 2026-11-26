@@ -4,25 +4,18 @@ const cookie = require('cookie-parser')
 const {UnauthenticatedError} = require('../errors/index')
 
 const auth = async (req,res,next) => {
-    // const token = req.cookies.accessToken
-
-    const authHeader = req.headers.authorization
-
-    console.log(authHeader);
+    let accessToken = req.headers.authorization
     
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthenticatedError('No token provided')
-    }
-
-    const token = authHeader.split(' ')[1]
-
-    if(!token){
+    if(!accessToken || !accessToken.startsWith("Bearer ")){
         throw new UnauthenticatedError('invalid token')
     }
 
+    accessToken = accessToken.replace("Bearer ","")
+
+
+    
     try {
-        const {userId,userName} = jwt.verify(token, process.env.JWT_ACCESS_SECRET)
+        const {userId,userName} = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET)
 
         req.user = {userId,userName}
         next()

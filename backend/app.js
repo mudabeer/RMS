@@ -9,6 +9,7 @@ const connectDB = require('./db/db')
 const authRouter = require('./routes/auth')
 const roomRouter = require('./routes/room')
 const transRouter = require('./routes/transaction')
+const choreRouter = require('./routes/chore')
 
 const errorHandler = require('./meddlewares/error-handler')
 
@@ -26,6 +27,7 @@ app.use(
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/room',roomRouter)
 app.use('/api/v1/transaction',transRouter)
+app.use('/api/v1/chore',choreRouter)
 
 app.use(errorHandler)
 

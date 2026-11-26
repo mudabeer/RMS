@@ -6,9 +6,21 @@ const {
 } = require('../errors/index')
 
 const updateDebtPayment = async (req,res) => {
+    // Guard: only the creditor (paidBy) can record debt settlements
+    if(req.transaction.paidBy.toString() !== req.user.userId.toString()){
+        throw new BadRequestError('only the creditor can settle debts')
+    }
+
     const {
         payment
     } = req.body
+
+    // Validate payment is a positive number
+    const paymentAmount = Number(payment)
+    if(isNaN(paymentAmount) || paymentAmount <= 0){
+        throw new BadRequestError('please provide a valid positive payment amount')
+    }
+
     const member = req.transaction.splitAmong.find(
         m => {
             if(m.userId.toString() === req.params.memberId){
@@ -17,12 +29,12 @@ const updateDebtPayment = async (req,res) => {
         }
     )
 
-    if(member.status === 'Paid'){
-        throw new BadRequestError('the debt amount paid')
+    if(!member){
+        throw new BadRequestError('member not found in this transaction')
     }
 
-    if(!payment ){
-        throw new BadRequestError('please provide payment amount')
+    if(member.status === 'Paid'){
+        throw new BadRequestError('the debt amount paid')
     }
 
     const dueAmount = member.debtAmount - member.paidAmount   

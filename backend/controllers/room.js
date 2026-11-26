@@ -68,6 +68,7 @@ const getRooms = async (req,res) => {
     })
 }
 const getSingleRoom = async (req,res) => {
+    await req.room.populate('members.user', 'name email')
     res.status(StatusCodes.OK).json({
         success: true,
         data:req.room,

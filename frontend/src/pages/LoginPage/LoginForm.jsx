@@ -1,27 +1,28 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
+import { tokenStore } from "../../api/tokenStore";
 
-function LoginForm (){
-    const [passwordVisibility, setPasswordVisibility] = useState(false);
+function LoginForm() {
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [userData, setUserData] = useState({
     email: "",
     password: "",
   });
+  const { login } = useAuth();
   const [errors, setErrors] = useState("");
   const [responseError, setResponseErrors] = useState("");
   const navigate = useNavigate();
 
   const submitForm = async () => {
-    console.log(userData);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/login",
-        {
-          ...userData
-        },
-      );
+      const response = await api.post("auth/login", {
+        ...userData,
+      });
       if (response.data.success) {
+        tokenStore.set(response.data.accessToken);
+        login(response.data.accessToken, response.data.user);
         navigate("/dashboard");
       } else {
         setResponseErrors("same thing went wrong try later");
@@ -127,7 +128,7 @@ function LoginForm (){
         {/* Submit Button */}
         <div className="pt-sm mt-auto">
           <button
-            className="w-full h-[48px] bg-primary text-on-primary rounded-md font-label-md text-label-md flex justify-center items-center gap-sm hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-[0.98]"
+            className="w-fu ll h-[48px] bg-primary text-on-primary rounded-md font-label-md text-label-md flex justify-center items-center gap-sm hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-[0.98]"
             type="submit"
           >
             Create Account
@@ -150,4 +151,4 @@ function LoginForm (){
   );
 }
 
-export default LoginForm
+export default LoginForm;

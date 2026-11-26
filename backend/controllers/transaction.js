@@ -51,6 +51,7 @@ const createTrans = async (req,res) =>{
         const transaction = await Transaction.create({
             title,
             amount,
+            category,
             roomId:req.params.roomId,
             shareAmount:debtAmount,
             paidBy:req.user.userId,
@@ -167,7 +168,9 @@ const getAllTrans = async (req,res) =>{
 
     result = result.skip(skip).limit(limit)
 
-    const transactions = await result;
+    const transactions = await result
+        .populate('paidBy', 'name')
+        .populate('splitAmong.userId', 'name');
     const totaltransactionss = await Transaction.countDocuments(queryObject);
     const numOfPages = Math.ceil(totaltransactionss / limit)
     
@@ -215,17 +218,16 @@ const updateTrans = async (req,res) =>{
 }
 
 const deleteTrans = async (req,res) => {
-    const check = req.transaction.splitAmong.find(
+    const hasSettledMember = req.transaction.splitAmong.some(
         m => {
-            console.log(m.userId !== req.transaction.paidBy);
-            
             if(m.userId.toString() !== req.transaction.paidBy.toString()){
-                return m.status === 'Paid' || 'Partial'
+                return m.status === 'Paid' || m.status === 'Partial'
             }
+            return false
         }
     )
 
-    if(check){
+    if(hasSettledMember){
         throw new BadRequestError('if any one\'s debt amount paid or partial can delete transaction')
     }
 

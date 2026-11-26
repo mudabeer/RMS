@@ -1,4 +1,4 @@
-import FeaturesCard from "./FeatureCard";
+import FeatureCard from "./FeatureCard";
 
 const features = [
   {
@@ -35,7 +35,7 @@ function FeaturesSection (){
           <div className="flex flex-col md:grid md:grid-cols-3 gap-md md:gap-lg max-w-7xl mx-auto">
             {features.map((feature) => {
                 return (
-                    <FeaturesCard 
+                    <FeatureCard 
                     {...feature}
                     key={feature.title}
                 />
