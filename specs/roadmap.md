@@ -10,18 +10,18 @@
 **Goal:** Make the existing code stop crashing and stop being exploitable. Zero new features.
 
 ### 0.1 Backend crash & logic fixes
-- [ ] Fix static `Date.now()` evaluation in `Vco.js` — use a function getter so TTL is computed per-document.
-- [ ] Fix `'Paid' || 'Partial'` operator precedence bug in `transaction.js:deleteTrans`.
-- [ ] Fix `[object Object]` in error handler — map `item.message` in Mongoose `ValidationError` formatting.
+- [x] Fix static `Date.now()` evaluation in `Vco.js` — use a function getter so TTL is computed per-document.
+- [x] Fix `'Paid' || 'Partial'` operator precedence bug in `transaction.js:deleteTrans`.
+- [x] Fix `[object Object]` in error handler — map `item.message` in Mongoose `ValidationError` formatting.
 
 ### 0.2 Backend authorization fix
-- [ ] Restrict debt settlement (`settleDebt.js`) to the creditor (`paidBy`) only (BOLA/IDOR fix).
-- [ ] Add positive-number validation on payment amounts.
+- [x] Restrict debt settlement (`settleDebt.js`) to the creditor (`paidBy`) only (BOLA/IDOR fix).
+- [x] Add positive-number validation on payment amounts.
 
 ### 0.3 Frontend crash fixes
-- [ ] Wrap lazy-loaded routes in `<Suspense fallback={<PageLoader />}>` in `App.jsx`.
-- [ ] Fix `tokenStore(null)` → `tokenStore.set(null)` in `axios.js` interceptor.
-- [ ] Remove `body` flex/center styles from `AuthPage.css`; scope to `.auth-page-container`.
+- [x] Wrap lazy-loaded routes in `<Suspense fallback={<PageLoader />}>` in `App.jsx`.
+- [x] Fix `tokenStore(null)` → `tokenStore.set(null)` in `axios.js` interceptor.
+- [x] Remove `body` flex/center styles from `AuthPage.css`; scope to `.auth-page-container`.
 
 ---
 
