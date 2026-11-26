@@ -207,3 +207,4 @@ These align with the broader "shared-living operating system" vision. Each is it
 
 > [!TIP]
 > Each phase above is designed to be completable in roughly 1–3 focused working sessions. Resist the urge to combine phases — ship each one, verify it works, then move on.
+

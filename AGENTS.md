@@ -35,6 +35,10 @@ RMS/
 │   ├── FEATURES.md          # Comprehensive feature inventory & completion status
 │   ├── FRONTEND.md          # Frontend architecture guide
 │   └── UI-UX.md             # Design tokens, typography, and component styling rules
+├── specs/                   # Project constitution — mission, stack, and roadmap
+│   ├── mission.md           # Vision, target audience, core principles, scope pillars
+│   ├── tech-stack.md        # Current stack inventory and direction
+│   └── roadmap.md           # Phased implementation order derived from improvements.md
 ├── frontend/
 │   ├── index.html           # Single page application entry HTML
 │   ├── vite.config.js       # Vite configuration

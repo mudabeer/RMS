@@ -38,3 +38,4 @@ Shared living runs on trust, but trust breaks down when records are informal. To
 
 > [!NOTE]
 > The first two pillars (Finances + Chores) define the MVP. Supplies, House Rules, and Communication are future expansions that keep the "operating system" vision alive without overloading the initial build.
+

@@ -68,3 +68,4 @@ These are **not committed**, but are natural next steps as the product matures:
 | CI/CD | None | GitHub Actions (`lint` → `test` → `build`) |
 | Monitoring | None | TBD |
 | Env management | Manual `.env` files, no `.env.example` committed | Add `.env.example` for backend and frontend |
+
