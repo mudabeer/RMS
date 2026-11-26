@@ -1,7 +1,7 @@
 import AuthPage from '../../components/Auth/AuthPage'
 import LoginForm from './LoginForm'
 
-function LoginPage({}){
+function LoginPage(){
     const title = "Welcom Back"
     const description = "Login to manage your shared living."
     const brandingTitle = ["Fast, Efficient","and Productive"]

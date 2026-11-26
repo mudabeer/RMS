@@ -7,6 +7,7 @@ import OtpInput from "../components/Auth/OtpInput";
 import SendOtpForm from "../pages/SendOtpPage/SendOtpForm";
 import LoginForm from "../pages/LoginPage/LoginForm";
 import ProtectedRoute from "../routes/ProtectedRoute";
+import GuestRoute from "../routes/GuestRoute";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
@@ -161,5 +162,37 @@ describe("Phase 3 — Frontend Foundation & Auth UI Tests", () => {
     );
 
     expect(screen.getByText("Private Dashboard")).toBeInTheDocument();
+  });
+
+  it("GuestRoute redirects authenticated users to /dashboard and allows guests", () => {
+    useAuth.mockReturnValueOnce({ isAuthenticated: true, loading: false });
+
+    const { unmount } = render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <Routes>
+          <Route element={<GuestRoute />}>
+            <Route path="/login" element={<div>Guest Login</div>} />
+          </Route>
+          <Route path="/dashboard" element={<div>Private Dashboard</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("Private Dashboard")).toBeInTheDocument();
+    unmount();
+
+    useAuth.mockReturnValueOnce({ isAuthenticated: false, loading: false });
+    render(
+      <MemoryRouter initialEntries={["/login"]}>
+        <Routes>
+          <Route element={<GuestRoute />}>
+            <Route path="/login" element={<div>Guest Login</div>} />
+          </Route>
+          <Route path="/dashboard" element={<div>Private Dashboard</div>} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("Guest Login")).toBeInTheDocument();
   });
 });

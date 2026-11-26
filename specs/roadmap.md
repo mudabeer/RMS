@@ -177,20 +177,20 @@
 **Goal:** Automated confidence that changes don't break things.
 
 ### 6.1 Backend integration tests
-- [ ] Set up Vitest + Supertest + `mongodb-memory-server`.
-- [ ] Test auth flow: send OTP → register → login → refresh → logout.
-- [ ] Test room flow: create → gen-vco → join → list members.
-- [ ] Test expense flow: create transaction → verify splits → settle debt → verify status.
+- [x] Set up Vitest + Supertest + `mongodb-memory-server`.
+- [x] Test auth flow: send OTP → register → login → refresh → logout.
+- [x] Test room flow: create → gen-vco → join → list members.
+- [x] Test expense flow: create transaction → verify splits → settle debt → verify status.
 
 ### 6.2 Frontend component tests
-- [ ] Set up Vitest + `@testing-library/react`.
-- [ ] Test route guards (`ProtectedRoute`, `GuestRoute`).
-- [ ] Test OTP input component.
-- [ ] Test Axios interceptor refresh logic.
+- [x] Set up Vitest + `@testing-library/react`.
+- [x] Test route guards (`ProtectedRoute`, `GuestRoute`).
+- [x] Test OTP input component.
+- [x] Test Axios interceptor refresh logic.
 
 ### 6.3 CI pipeline
-- [ ] Add `.github/workflows/ci.yml`: lint → test → build on every PR.
-- [ ] Add ESLint config for backend and frontend.
+- [x] Add `.github/workflows/ci.yml`: lint → test → build on every PR.
+- [x] Add ESLint config for backend and frontend.
 
 ---
 
