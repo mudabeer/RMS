@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 process.env.JWT_ACCESS_SECRET = 'test-access-secret';
-process.env.JWT_REHRESH_SECRET = 'test-refresh-secret';
+process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
 process.env.JWT_ACCESS_LIFETIME = '15m';
 process.env.JWT_REFRESH_LIFETIME = '7d';
 
@@ -24,7 +24,7 @@ const createUserWithToken = async (name, email) => {
     email,
     password: 'Password123!',
   });
-  const token = user.creatAccessToken();
+  const token = user.createAccessToken();
   return { user, token };
 };
 

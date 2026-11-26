@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
 
-const auth = require('../meddlewares/authentication')
-const loadRoom = require('../meddlewares/loadRoom')
-const memberExistsInRoom = require('../meddlewares/memberExistsInRoom')
-const requireCreator = require('../meddlewares/requireCreator')
-const requireRoomMember = require('../meddlewares/requireRoomMember')
-const { genVcoLimiter } = require('../meddlewares/rateLimiter')
+const auth = require('../middlewares/authentication')
+const loadRoom = require('../middlewares/loadRoom')
+const memberExistsInRoom = require('../middlewares/memberExistsInRoom')
+const requireCreator = require('../middlewares/requireCreator')
+const requireRoomMember = require('../middlewares/requireRoomMember')
+const { genVcoLimiter } = require('../middlewares/rateLimiter')
 
 const {
     updateMember,

@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 process.env.JWT_ACCESS_SECRET = 'test-access-secret';
-process.env.JWT_REHRESH_SECRET = 'test-refresh-secret';
+process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
 process.env.JWT_ACCESS_LIFETIME = '15m';
 process.env.JWT_REFRESH_LIFETIME = '7d';
 

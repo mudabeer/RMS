@@ -114,12 +114,13 @@ function ResetPasswordForm() {
 function ResetPasswordPage() {
   return (
     <AuthPage
-      childern={<ResetPasswordForm />}
       title="Reset Password"
       description="Choose a new password for your RMS account."
       brandingTitle={["Fast, Efficient", "and Productive"]}
       brandingDescription="Streamline your shared living experience today."
-    />
+    >
+      <ResetPasswordForm />
+    </AuthPage>
   );
 }
 

@@ -42,12 +42,12 @@ userSchema.pre('save', async function(next) {
 userSchema.methods.createRefreshToken = function(){
     return jwt.sign(
         {userId: this._id, userName: this.name, jti: crypto.randomUUID()},
-        process.env.JWT_REHRESH_SECRET,
+        process.env.JWT_REFRESH_SECRET,
         {expiresIn:process.env.JWT_REFRESH_LIFETIME}
     )
 }
 
-userSchema.methods.creatAccessToken = function(){
+userSchema.methods.createAccessToken = function(){
     return jwt.sign(
         {userId: this._id,userName: this.name},
         process.env.JWT_ACCESS_SECRET,

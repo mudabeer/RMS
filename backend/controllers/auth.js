@@ -35,7 +35,7 @@ const hashToken = (token) =>
 
 const issueSession = async (res, user) => {
     const refreshToken = await user.createRefreshToken()
-    const accessToken = await user.creatAccessToken()
+    const accessToken = await user.createAccessToken()
 
     await RefreshToken.create({
         user: user._id,
@@ -155,7 +155,7 @@ const forgotPassword = async (req,res) => {
 
     await user.save()
 
-    const resetLink = `${process.env.FRONTEND_URL || 'frot'}/reset-password/${resetToken}`
+    const resetLink = `${process.env.FRONTEND_URL || process.env.CLIENT_URL || 'http://localhost:5173'}/reset-password/${resetToken}`
 
     await resetPasswordMail(resetLink,email)
 
@@ -230,7 +230,7 @@ const refresh = async (req,res) => {
     try {
         payload = jwt.verify(
             refreshToken,
-            process.env.JWT_REHRESH_SECRET
+            process.env.JWT_REFRESH_SECRET
         )
     } catch (error) {
         throw new UnauthenticatedError('invalid refresh token')

@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
 
-const auth = require('../meddlewares/authentication')
-const { loginLimiter, sendCodeLimiter } = require('../meddlewares/rateLimiter')
+const auth = require('../middlewares/authentication')
+const { loginLimiter, sendCodeLimiter } = require('../middlewares/rateLimiter')
 
 const {
     register,

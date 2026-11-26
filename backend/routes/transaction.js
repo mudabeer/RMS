@@ -13,10 +13,10 @@ const {
     updateDebtPayment
 } = require('../controllers/settleDebt')
 
-const auth = require('../meddlewares/authentication')
-const loadRoom = require('../meddlewares/loadRoom')
-const requireRoomMember = require('../meddlewares/requireRoomMember')
-const loadTransaction = require('../meddlewares/loadTransaction')
+const auth = require('../middlewares/authentication')
+const loadRoom = require('../middlewares/loadRoom')
+const requireRoomMember = require('../middlewares/requireRoomMember')
+const loadTransaction = require('../middlewares/loadTransaction')
 
 router.route('/:roomId/').post(auth,loadRoom,requireRoomMember,createTrans).get(auth,loadRoom,requireRoomMember,getAllTrans)
 router.route('/:roomId/:transactionId')

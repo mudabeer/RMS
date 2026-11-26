@@ -25,7 +25,7 @@ RMS/
 │   ├── controllers/         # Request handling & domain controllers
 │   ├── db/                  # Mongoose connection helpers
 │   ├── errors/              # Custom HTTP error classes (CustomAPI, BadRequest, NotFound, etc.)
-│   ├── meddlewares/         # Express middlewares (auth, room loader, error handler)
+│   ├── middlewares/         # Express middlewares (auth, room loader, error handler)
 │   ├── models/              # Mongoose schemas (User, Room, Transaction, RefreshToken, Otp, Vco, Chore)
 │   ├── routes/              # Express API route declarations
 │   ├── services/            # Background & external services (Email)

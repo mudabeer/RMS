@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../meddlewares/authentication')
-const loadRoom = require('../meddlewares/loadRoom')
-const requireRoomMember = require('../meddlewares/requireRoomMember')
+const auth = require('../middlewares/authentication')
+const loadRoom = require('../middlewares/loadRoom')
+const requireRoomMember = require('../middlewares/requireRoomMember')
 const { getRoomChores, createChore, updateChore, deleteChore } = require('../controllers/chore')
 
 router.route('/:roomId')

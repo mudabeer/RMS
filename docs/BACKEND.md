@@ -188,7 +188,7 @@ NODE_ENV=development
 
 JWT_ACCESS_SECRET=your_access_token_secret
 JWT_ACCESS_LIFETIME=15m
-JWT_REHRESH_SECRET=your_refresh_token_secret
+JWT_REFRESH_SECRET=your_refresh_token_secret
 JWT_REFRESH_LIFETIME=7d
 
 EMAIL=your_gmail_address
@@ -196,8 +196,6 @@ PASSWORD=your_gmail_app_password
 
 FRONTEND_URL=http://localhost:5173
 ```
-
-> **Note:** `JWT_REHRESH_SECRET` is spelled that way (not `JWT_REFRESH_SECRET`) in the actual code (`backend/models/User.js`, `backend/controllers/auth.js`). Your `.env` file must match this exact spelling for refresh tokens to work, until the typo is fixed in the code.
 
 `EMAIL` / `PASSWORD` are used as Gmail SMTP credentials in `backend/config/email.js`. If you use a real Gmail account, you'll need an [App Password](https://support.google.com/accounts/answer/185833), not your normal account password.
 

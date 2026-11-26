@@ -102,12 +102,13 @@ function ForgotPasswordForm() {
 function ForgotPasswordPage() {
   return (
     <AuthPage
-      childern={<ForgotPasswordForm />}
       title="Forgot Password"
       description="Enter your email address to receive a password reset link."
       brandingTitle={["Fast, Efficient", "and Productive"]}
       brandingDescription="Streamline your shared living experience today."
-    />
+    >
+      <ForgotPasswordForm />
+    </AuthPage>
   );
 }
 

@@ -152,23 +152,23 @@
 **Goal:** Clean up accumulated tech debt so the codebase is contributor-friendly.
 
 ### 5.1 Naming & typo fixes
-- [ ] Rename `meddlewares/` → `middlewares/`; update all imports.
-- [ ] Fix `JWT_REHRESH_SECRET` → `JWT_REFRESH_SECRET` in code + docs.
-- [ ] Fix `creatAccessToken` → `createAccessToken`.
-- [ ] Fix `childern` → `children` prop in `AuthPage.jsx` / `AuthCard.jsx`.
-- [ ] Rename `BrandlingHeadline.jsx` → `BrandingHeadline.jsx`.
-- [ ] Fix `Registrationform` → `RegistrationForm` component name.
-- [ ] Fix import casing mismatches (`Authpage` → `AuthPage`, etc.) for Linux compatibility.
+- [x] Rename `meddlewares/` → `middlewares/`; update all imports.
+- [x] Fix `JWT_REHRESH_SECRET` → `JWT_REFRESH_SECRET` in code + docs.
+- [x] Fix `creatAccessToken` → `createAccessToken`.
+- [x] Fix `childern` → `children` prop in `AuthPage.jsx` / `AuthCard.jsx`.
+- [x] Rename `BrandlingHeadline.jsx` → `BrandingHeadline.jsx`.
+- [x] Fix `Registrationform` → `RegistrationForm` component name.
+- [x] Fix import casing mismatches (`Authpage` → `AuthPage`, etc.) for Linux compatibility.
 
 ### 5.2 Dependency cleanup
-- [ ] Remove unused `redis` from `backend/package.json`.
-- [ ] Remove duplicate `http-status-code` (keep `http-status-codes`).
-- [ ] Add `nodemon` as a devDependency or remove it from the `start` script.
-- [ ] Delete empty/unused files: `MyRooms.jsx`, `style.css`.
+- [x] Remove unused `redis` from `backend/package.json`.
+- [x] Remove duplicate `http-status-code` (keep `http-status-codes`).
+- [x] Add `nodemon` as a devDependency or remove it from the `start` script.
+- [x] Delete empty/unused files: `MyRooms.jsx`, `style.css`.
 
 ### 5.3 Dev experience
-- [ ] Commit a `backend/.env.example` and `frontend/.env.example`.
-- [ ] Add `FRONTEND_URL` / `VITE_API_URL` env-based configuration instead of hardcoded URLs.
+- [x] Commit a `backend/.env.example` and `frontend/.env.example`.
+- [x] Add `FRONTEND_URL` / `VITE_API_URL` env-based configuration instead of hardcoded URLs.
 
 ---
 

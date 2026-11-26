@@ -12,8 +12,8 @@ const roomRouter = require('./routes/room')
 const transRouter = require('./routes/transaction')
 const choreRouter = require('./routes/chore')
 
-const errorHandler = require('./meddlewares/error-handler')
-const sanitizeInput = require('./meddlewares/sanitize')
+const errorHandler = require('./middlewares/error-handler')
+const sanitizeInput = require('./middlewares/sanitize')
 
 
 //middlewares
