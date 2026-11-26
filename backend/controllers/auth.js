@@ -17,8 +17,8 @@ const {
 } = require('../services/emailService')
 
 const {
-    attachAccessToken,
-    attachRefreshToken
+    attachRefreshToken,
+    clearRefreshToken
 } = require('../utils/cookies')
 
 const {BadRequestError,
@@ -27,6 +27,29 @@ const {BadRequestError,
 } = require('../errors/index')
 const { transporter } = require('../config/email')
 const { log } = require('console')
+
+const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000
+
+const hashToken = (token) =>
+    crypto.createHash('sha256').update(token).digest('hex')
+
+const issueSession = async (res, user) => {
+    const refreshToken = await user.createRefreshToken()
+    const accessToken = await user.creatAccessToken()
+
+    await RefreshToken.create({
+        user: user._id,
+        tokenHash: hashToken(refreshToken),
+        expiresAt: Date.now() + REFRESH_TOKEN_TTL_MS
+    })
+
+    attachRefreshToken(res, refreshToken)
+    return accessToken
+}
+
+const revokeUserSessions = async (userId) => {
+    await RefreshToken.deleteMany({ user: userId })
+}
 
 
 const sendCode = async (req,res) => {
@@ -165,6 +188,7 @@ const resetPassword = async (req,res) => {
 
     user.password = newPassword
     await user.save()
+    await revokeUserSessions(user._id)
 
     res.status(StatusCodes.OK).json({
         "success":true,
@@ -184,19 +208,7 @@ const login = async (req,res) => {
         throw new BadRequestError('credential does not match')
     }
 
-    const refreshToken = await user.createRefreshToken()
-    const accessToken = await user.creatAccessToken()
-
-    const salt = await bcrypt.genSalt(10)
-    const refreshTokenHash = await  bcrypt.hash(refreshToken,salt)
-
-    await RefreshToken.create({
-        user,
-        tokenHash:refreshTokenHash,
-        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
-    })
-
-    attachRefreshToken(res, refreshToken)
+    const accessToken = await issueSession(res, user)
 
     res.status(StatusCodes.OK).json({
         accessToken,
@@ -214,53 +226,59 @@ const refresh = async (req,res) => {
         throw new UnauthenticatedError('refresh token missing')
     }
 
+    let payload
     try {
-        const playload = jwt.verify(
+        payload = jwt.verify(
             refreshToken,
             process.env.JWT_REHRESH_SECRET
         )
-        
-        
-        const tokenDoc = await RefreshToken.findOne({
-            user: playload.userId
-        })
+    } catch (error) {
+        throw new UnauthenticatedError('invalid refresh token')
+    }
 
-        
+    const tokenHash = hashToken(refreshToken)
+    const tokenDoc = await RefreshToken.findOne({ tokenHash })
 
-        if(!tokenDoc){
-            throw new UnauthenticatedError('invalid refresh token')
-        }
+    if(!tokenDoc){
+        await revokeUserSessions(payload.userId)
+        clearRefreshToken(res)
+        throw new UnauthenticatedError('invalid refresh token')
+    }
 
-        if(! await bcrypt.compare(refreshToken,tokenDoc.tokenHash)){
-            throw new UnauthenticatedError('invalid refresh token')
-        }
+    if(tokenDoc.expiresAt < Date.now()){
+        await RefreshToken.deleteOne({ _id: tokenDoc._id })
+        clearRefreshToken(res)
+        throw new UnauthenticatedError('invalid refresh token')
+    }
 
-        const user = await User.findOne({_id:playload.userId})
+    const user = await User.findById(payload.userId)
+    if(!user){
+        await RefreshToken.deleteOne({ _id: tokenDoc._id })
+        clearRefreshToken(res)
+        throw new UnauthenticatedError('invalid refresh token')
+    }
 
-        const accessToken = await user.creatAccessToken()
-        
-        res.status(StatusCodes.OK).json({
+    await RefreshToken.deleteOne({ _id: tokenDoc._id })
+    const accessToken = await issueSession(res, user)
+
+    res.status(StatusCodes.OK).json({
         accessToken,
         "user":{
             "id":user._id,
             "name":user.name
         }
     })
-    } catch (error) {
-        throw new UnauthenticatedError('invalid refresh token')
-    }
 }
 
 const logout = async (req,res) => {
-    await RefreshToken.deleteOne({user:req.user.userId})
+    const refreshToken = req.cookies?.refreshToken
+    if (refreshToken) {
+        await RefreshToken.deleteOne({ tokenHash: hashToken(refreshToken) })
+    } else {
+        await revokeUserSessions(req.user.userId)
+    }
 
-    res.clearCookie('refreshToken', {
-        httpOnly: true,
-    });
-
-    res.clearCookie('accessToken', {
-        httpOnly: true,
-    });
+    clearRefreshToken(res)
 
     res.status(StatusCodes.OK).json({
         success: true,

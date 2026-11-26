@@ -40,22 +40,23 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    originalRequest._retry = true;
+
     try {
         const response = await refreshAxios.post('/auth/refresh');
 
-        const newAccessToken = response.data.accessToken
+        const newAccessToken = response.data.accessToken;
 
         tokenStore.set(newAccessToken);
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-        return api(originalRequest)
+        return api(originalRequest);
 
-    }catch(refreshError){
-        tokenStore.set(null)
-        return Promise.reject(refreshError)
+    } catch (refreshError) {
+        tokenStore.set(null);
+        return Promise.reject(refreshError);
     }
-    return Promise.reject(error);
   },
 );
 
