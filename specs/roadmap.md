@@ -53,34 +53,34 @@
 **Goal:** Data stays correct and the API is resistant to abuse.
 
 ### 2.1 Financial math fix
-- [ ] Implement integer-cent split calculation with remainder distribution in `transaction.js:createTrans`.
-- [ ] Update `settleDebt.js` to use `Math.round(val * 100)` comparisons.
+- [x] Implement integer-cent split calculation with remainder distribution in `transaction.js:createTrans`.
+- [x] Update `settleDebt.js` to use `Math.round(val * 100)` comparisons.
 
 ### 2.2 Input validation
-- [ ] Validate that custom-split member IDs belong to the room (`transaction.js`).
-- [ ] Sanitize request bodies against MongoDB operator injection (`$gt`, `$ne`).
-- [ ] Validate negative/zero amounts on transaction creation.
+- [x] Validate that custom-split member IDs belong to the room (`transaction.js`).
+- [x] Sanitize request bodies against MongoDB operator injection (`$gt`, `$ne`).
+- [x] Validate negative/zero amounts on transaction creation.
 
 ### 2.3 Rate limiting & headers
-- [ ] Mount `express-rate-limit` on `/auth/login`, `/auth/send-code`, `/room/gen-vco`.
-- [ ] Mount `helmet` for standard security headers.
-- [ ] Move CORS origin from hardcoded string to `process.env.CLIENT_URL`.
+- [x] Mount `express-rate-limit` on `/auth/login`, `/auth/send-code`, `/room/gen-vco`.
+- [x] Mount `helmet` for standard security headers.
+- [x] Move CORS origin from hardcoded string to `process.env.CLIENT_URL`.
 
 ### 2.4 Database indexes
-- [ ] Add index on `Room.roomCode` (unique).
-- [ ] Add compound index on `Transaction.roomId` + `createdAt`.
-- [ ] Add index on `Transaction.splitAmong.userId`.
-- [ ] Add index on `RefreshToken.user`.
-- [ ] Add sparse index on `User.passwordResetToken`.
+- [x] Add index on `Room.roomCode` (unique).
+- [x] Add compound index on `Transaction.roomId` + `createdAt`.
+- [x] Add index on `Transaction.splitAmong.userId`.
+- [x] Add index on `RefreshToken.user`.
+- [x] Add sparse index on `User.passwordResetToken`.
 
 ### 2.5 Cascade cleanup
-- [ ] On room deletion: delete associated `Transaction`, `Chore`, and `Vco` documents.
-- [ ] On member removal: block if member has outstanding debts or is creditor of active transactions.
+- [x] On room deletion: delete associated `Transaction`, `Chore`, and `Vco` documents.
+- [x] On member removal: block if member has outstanding debts or is creditor of active transactions.
 
 ### 2.6 HTTP standards compliance
-- [ ] Fix `getSingleTrans` returning 201 → 200.
-- [ ] Fix 204 responses that include a JSON body → use 200 or `res.status(204).end()`.
-- [ ] Add `ForbiddenError` (403) class to `errors/`.
+- [x] Fix `getSingleTrans` returning 201 → 200.
+- [x] Fix 204 responses that include a JSON body → use 200 or `res.status(204).end()`.
+- [x] Add `ForbiddenError` (403) class to `errors/`.
 
 ---
 
@@ -89,31 +89,31 @@
 **Goal:** A usable, navigable app shell that covers auth and room basics.
 
 ### 3.1 Layout architecture
-- [ ] Extract shared `AppLayout.jsx` with `<SideNavbar />` + `<Outlet />`.
-- [ ] Nest all authenticated routes under `<ProtectedRoute>` → `<AppLayout>`.
-- [ ] Remove duplicated sidebar/header markup from `MainLayout`, `MyRoomsPage`, `ProfilePage`, `RoomDetailsPage`.
+- [x] Extract shared `AppLayout.jsx` with `<SideNavbar />` + `<Outlet />`.
+- [x] Nest all authenticated routes under `<ProtectedRoute>` → `<AppLayout>`.
+- [x] Remove duplicated sidebar/header markup from `MainLayout`, `MyRoomsPage`, `ProfilePage`, `RoomDetailsPage`.
 
 ### 3.2 Mobile navigation
-- [ ] Wire hamburger icon to a slide-over drawer, or add a `<BottomNav />` for mobile.
-- [ ] Ensure all touch targets meet 44×44px minimum.
+- [x] Wire hamburger icon to a slide-over drawer, or add a `<BottomNav />` for mobile.
+- [x] Ensure all touch targets meet 44×44px minimum.
 
 ### 3.3 Auth pages
-- [ ] Build a working login page (`LoginPage.jsx`) wired to `POST /auth/login`.
-- [ ] Add "Forgot Password?" link on login → build password-reset request page.
-- [ ] Build password-reset-with-token page (`/reset-password/:token`).
-- [ ] Fix `SendOtpForm.jsx` — `setResponseErrors` typo, missing early return, unguarded error access.
+- [x] Build a working login page (`LoginPage.jsx`) wired to `POST /auth/login`.
+- [x] Add "Forgot Password?" link on login → build password-reset request page.
+- [x] Build password-reset-with-token page (`/reset-password/:token`).
+- [x] Fix `SendOtpForm.jsx` — `setResponseErrors` typo, missing early return, unguarded error access.
 
 ### 3.4 Form & input polish
-- [ ] Build accessible `<OtpInput />` component with auto-focus, paste support, `inputMode="numeric"`.
-- [ ] Pass verified email from `/sendotp` → `/register` via router navigation state.
-- [ ] Redirect successful registration to `/login` with an informational toast.
+- [x] Build accessible `<OtpInput />` component with auto-focus, paste support, `inputMode="numeric"`.
+- [x] Pass verified email from `/sendotp` → `/register` via router navigation state.
+- [x] Redirect successful registration to `/login` with an informational toast.
 
 ### 3.5 Route & asset cleanup
-- [ ] Fix `className="w-fu ll"` typo in `LoginForm.jsx`.
-- [ ] Fix login button text ("Create Account" → "Sign In").
-- [ ] Fix `<img src="screen.png">` → `/screen.png` for sub-route compatibility.
-- [ ] Normalize all routes to lowercase kebab-case.
-- [ ] Add `<Route path="*" element={<NotFoundPage />} />`.
+- [x] Fix `className="w-fu ll"` typo in `LoginForm.jsx`.
+- [x] Fix login button text ("Create Account" → "Sign In").
+- [x] Fix `<img src="screen.png">` → `/screen.png` for sub-route compatibility.
+- [x] Normalize all routes to lowercase kebab-case.
+- [x] Add `<Route path="*" element={<NotFoundPage />} />`.
 
 ---
 

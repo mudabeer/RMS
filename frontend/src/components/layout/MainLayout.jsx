@@ -123,51 +123,7 @@ function MainLayout() {
   };
 
   return (
-    <main className="flex-1 md:ml-64 h-full flex flex-col overflow-hidden">
-      {/* TopAppBar */}
-      <header className="bg-surface shadow-sm docked full-width top-0 flex justify-between items-center w-full px-lg py-md z-30 flex-shrink-0">
-        <div className="md:hidden flex items-center gap-md">
-          <span
-            className="material-symbols-outlined text-primary text-2xl"
-            data-icon="menu"
-          >
-            menu
-          </span>
-          <h1 className="font-headline-md text-headline-md font-bold text-primary">
-            RMS Dashboard
-          </h1>
-        </div>
-        <div className="hidden md:block">
-          <h2 className="font-headline-md text-headline-md font-bold text-primary">
-            RMS Dashboard
-          </h2>
-        </div>
-        <div className="flex items-center gap-md">
-          <button className="text-on-surface-variant hover:bg-surface-container-high p-xs rounded-full transition-colors active:scale-95">
-            <span
-              className="material-symbols-outlined"
-              data-icon="notifications"
-            >
-              notifications
-            </span>
-          </button>
-          <button className="text-on-surface-variant hover:bg-surface-container-high p-xs rounded-full transition-colors active:scale-95">
-            <span className="material-symbols-outlined" data-icon="help">
-              help
-            </span>
-          </button>
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-variant cursor-pointer">
-            <img
-              alt="User profile avatar"
-              className="w-full h-full object-cover"
-              data-alt="A small circular avatar placeholder image showing a subtle, soft grey silhouette of a person against a slightly lighter grey background. The style is minimalist and clean, suitable for a professional dashboard UI."
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGakbCBgCuGAa78XvVu79dWU3NY3deK67V-WeLG77sx5k-5fhW7pW7xssjqI_m7KqNu9RD5RlKUpT9_e4vkk23fQo8FclvZp5djzpCZ86W0e7oMPtVtTzVvnnoJS2BC8x0ASRYzAlRZJnQZKv6MKiUbqBXy5JNKvKddIdFodOCiCsMHUTQRBEg7N3FT_vPcUCI8Xk5HtRnubh4HzKti-om31aGDRm4LmwihNp7R_yGxqRdME2sNyVx"
-            />
-          </div>
-        </div>
-      </header>
-      {/* Scrollable Canvas*/}
-      <div className="flex-1 overflow-y-auto p-container-margin md:p-xl space-y-xl bg-background">
+    <div className="p-container-margin md:p-xl space-y-xl bg-background">
         {/* Greeting Section*/}
         <section className="max-w-[1200px] mx-auto">
           <h1 className="font-display text-display text-on-surface md:font-display md:text-display font-headline-lg-mobile text-headline-lg-mobile">
@@ -445,7 +401,6 @@ function MainLayout() {
           </div>
         )}
       </div>
-    </main>
   );
 }
 

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api/axios";
-import SideNavbar from "../../components/layout/SideNavbar";
 
 function MyRoomsPage() {
   const [rooms, setRooms] = useState([]);
@@ -46,14 +45,8 @@ function MyRoomsPage() {
   };
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background text-on-surface">
-      <SideNavbar activeNav="My Rooms" />
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden md:ml-64">
-        <header className="flex shrink-0 items-center bg-surface px-lg py-md shadow-sm">
-          <h1 className="font-headline-md text-headline-md font-bold text-primary">My Rooms</h1>
-        </header>
-        <div className="flex-1 overflow-y-auto bg-background p-container-margin md:p-xl">
-          <section className="mx-auto w-full max-w-[1200px] space-y-xl">
+    <div className="bg-background p-container-margin md:p-xl">
+      <section className="mx-auto w-full max-w-[1200px] space-y-xl">
             <div>
               <h2 className="font-display text-display font-bold text-on-surface">Your shared spaces</h2>
               <p className="mt-2 text-on-surface-variant">Browse your rooms, find an invite code, or create a new space.</p>
@@ -77,7 +70,7 @@ function MyRoomsPage() {
                 <span className="material-symbols-outlined text-4xl text-primary">holiday_village</span>
                 <h3 className="mt-3 font-headline-md text-headline-md font-semibold">{search ? "No matching rooms" : "You haven't joined any rooms yet"}</h3>
                 <p className="mx-auto mt-2 max-w-[28rem] text-on-surface-variant">Create a shared space or join one with an invite code to get started.</p>
-                {!search && <Link to="/Dashboard" className="mt-6 inline-flex rounded-xl bg-primary px-5 py-3 font-semibold text-on-primary hover:bg-surface-tint">Go to dashboard</Link>}
+                {!search && <Link to="/dashboard" className="mt-6 inline-flex min-h-[44px] items-center rounded-xl bg-primary px-5 py-3 font-semibold text-on-primary hover:bg-surface-tint">Go to dashboard</Link>}
               </div>
             )}
 
@@ -108,8 +101,6 @@ function MyRoomsPage() {
               </>
             )}
           </section>
-        </div>
-      </main>
     </div>
   );
 }

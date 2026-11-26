@@ -2,13 +2,14 @@ const Transaction = require('../models/Transaction')
 const {StatusCodes}  = require('http-status-codes')
 
 const {
-    BadRequestError
+    BadRequestError,
+    ForbiddenError
 } = require('../errors/index')
 
 const updateDebtPayment = async (req,res) => {
     // Guard: only the creditor (paidBy) can record debt settlements
     if(req.transaction.paidBy.toString() !== req.user.userId.toString()){
-        throw new BadRequestError('only the creditor can settle debts')
+        throw new ForbiddenError('only the creditor can settle debts')
     }
 
     const {
@@ -17,7 +18,8 @@ const updateDebtPayment = async (req,res) => {
 
     // Validate payment is a positive number
     const paymentAmount = Number(payment)
-    if(isNaN(paymentAmount) || paymentAmount <= 0){
+    const paymentCents = Math.round(paymentAmount * 100)
+    if(!Number.isFinite(paymentAmount) || paymentCents <= 0){
         throw new BadRequestError('please provide a valid positive payment amount')
     }
 
@@ -37,15 +39,18 @@ const updateDebtPayment = async (req,res) => {
         throw new BadRequestError('the debt amount paid')
     }
 
-    const dueAmount = member.debtAmount - member.paidAmount   
+    const debtCents = Math.round(Number(member.debtAmount) * 100)
+    const paidCents = Math.round(Number(member.paidAmount) * 100)
+    const dueCents = debtCents - paidCents
 
-    if (payment > dueAmount) {
+    if (paymentCents > dueCents) {
         throw new BadRequestError('payment exceeds due amount');
     }
 
-    const status = Number(dueAmount) === Number(payment) ? 'Paid' : 'Partial'
+    const newPaidCents = paidCents + paymentCents
+    const status = newPaidCents === debtCents ? 'Paid' : 'Partial'
 
-    member.paidAmount = Number(member.paidAmount) + Number(payment)
+    member.paidAmount = newPaidCents / 100
     member.status = status
 
     req.transaction.splitAmong.forEach((element,index,array) => {

@@ -33,5 +33,6 @@ const roomSchema = mongoose.Schema({
 },{timestamps: true})
 
 roomSchema.index({ 'members.user': 1 });
+roomSchema.index({ roomCode: 1 }, { unique: true });
 
 module.exports = mongoose.model('Room',roomSchema)

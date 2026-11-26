@@ -30,6 +30,8 @@ const userSchema = mongoose.Schema({
     }
 })
 
+userSchema.index({ passwordResetToken: 1 }, { sparse: true });
+
 userSchema.pre('save', async function(next) {
     if(!this.isModified('password')) return next();
 

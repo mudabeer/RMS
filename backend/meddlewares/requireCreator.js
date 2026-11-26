@@ -1,13 +1,13 @@
 const Room = require('../models/Room')
 
 const {
-    BadRequestError
+    ForbiddenError
 } = require('../errors/index')
 
 const requireCreator = async (req,res,next) => {
 
     if( req.room.creator.toString() !== req.user.userId){
-        throw new BadRequestError('invalid authentication') 
+        throw new ForbiddenError('invalid authentication') 
     }
 
     next();

@@ -1,91 +1,80 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import api from "../../api/axios";
+import OtpInput from "../../components/Auth/OtpInput";
 
-function Registrationform() {
+function RegistrationForm() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [userData, setUserData] = useState({
     name: "",
-    email: "",
+    email: location.state?.email || "",
     password: "",
     otp: Array(6).fill(""),
   });
-  const [errors, setErrors] = useState("");
-  const [responseError, setResponseErrors] = useState("");
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const [responseError, setResponseError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const submitForm = async () => {
-    console.log(userData);
+    setSubmitting(true);
+    setResponseError("");
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/register",
-        {
-          name: userData.name,
-          email: userData.email,
-          password: userData.password,
-          otp: userData.otp.join(""),
-        },
-      );
-      if (response.data.success) {
-        navigate("/dashboard");
+      const response = await api.post("/auth/register", {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        otp: userData.otp.join(""),
+      });
+      if (response.data?.success) {
+        navigate("/login", {
+          state: { infoMessage: "Account created successfully. Please sign in." },
+        });
       } else {
-        setResponseErrors("same thing went wrong try later");
+        setResponseError("Something went wrong. Please try again later.");
       }
     } catch (error) {
-      console.log(error.response.data);
-      setResponseErrors(error.response.data.msg);
+      setResponseError(
+        error.response?.data?.msg || error.message || "Registration failed."
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
-
-  const inputRefs = useRef([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
   };
 
-  const handleChangeOtp = (e, index) => {
-    const value = e.target.value;
-    if (value.length > 1) return;
-    const newOtp = [...userData.otp];
-    newOtp[index] = value;
-    setUserData({ ...userData, otp: [...newOtp] });
-  };
-
-  const handleKeyDown = (e, index) => {
-    if (e.key === "Backspace" && !userData.otp[index] && index > 0) {
-      inputRefs.current[index - 1].focus();
-    }
-  };
-  const handleKeyUp = (e, index) => {
-    if (e.key.length === 1 && index < 5) {
-      inputRefs.current[index + 1].focus();
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!userData.name) newErrors.name = "name is required";
-    if (!userData.email.includes("@")) newErrors.email = " invalid email";
-    if (!userData.password) newErrors.password = "password is required";
+    if (!userData.name.trim()) newErrors.name = "Name is required";
+    if (!userData.email.includes("@")) newErrors.email = "Invalid email";
+    if (!userData.password) newErrors.password = "Password is required";
     if (userData.otp.some((value) => value === "")) {
       newErrors.otp = "OTP is required";
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-    } else {
-      await submitForm();
-      console.log("successfully");
+      return;
     }
+
+    setErrors({});
+    await submitForm();
   };
 
   return (
     <>
       <form className="space-y-md" onSubmit={handleSubmit}>
         {responseError && (
-          <div className="p-sm rounded-lg bg-error-container border border-error flex items-center gap-xs mb-md">
+          <div
+            role="alert"
+            className="p-sm rounded-lg bg-error-container border border-error flex items-center gap-xs mb-md"
+          >
             <span
               className="material-symbols-outlined text-error"
               style={{ fontVariationSettings: '"FILL" 1' }}
@@ -97,7 +86,6 @@ function Registrationform() {
             </p>
           </div>
         )}
-        {/* Full Name */}
         <div>
           <label
             className="block font-label-md text-label-md text-on-surface mb-xs"
@@ -112,6 +100,7 @@ function Registrationform() {
               placeholder="John Doe"
               type="text"
               name="name"
+              value={userData.name}
               onChange={handleChange}
             />
           </div>
@@ -119,7 +108,6 @@ function Registrationform() {
             <p className="text-label-sm text-error mt-xs">{errors.name}</p>
           )}
         </div>
-        {/* Email */}
         <div>
           <label
             className="block font-label-md text-label-md text-on-surface mb-xs"
@@ -134,6 +122,7 @@ function Registrationform() {
               placeholder="john@example.com"
               type="email"
               name="email"
+              value={userData.email}
               onChange={handleChange}
             />
           </div>
@@ -141,7 +130,6 @@ function Registrationform() {
             <p className="text-label-sm text-error mt-xs">{errors.email}</p>
           )}
         </div>
-        {/* Password */}
         <div>
           <label
             className="block font-label-md text-label-md text-on-surface mb-xs"
@@ -156,10 +144,12 @@ function Registrationform() {
               placeholder="••••••••"
               type={passwordVisibility ? "text" : "password"}
               name="password"
+              value={userData.password}
               onChange={handleChange}
             />
             <button
-              className="absolute inset-y-0 right-0 pr-sm flex items-center text-outline hover:text-on-surface transition-colors"
+              aria-label={passwordVisibility ? "Hide password" : "Show password"}
+              className="absolute inset-y-0 right-0 pr-sm flex min-w-[44px] items-center justify-center text-outline hover:text-on-surface transition-colors"
               type="button"
               onClick={() => {
                 setPasswordVisibility(!passwordVisibility);
@@ -177,7 +167,6 @@ function Registrationform() {
             <p className="text-label-sm text-error mt-xs">{errors.password}</p>
           )}
         </div>
-        {/* OTP Verification */}
         <div className="pt-sm border-t border-surface-variant mt-sm">
           <label className="block font-label-md text-label-md text-on-surface mb-base">
             Verify OTP
@@ -185,34 +174,19 @@ function Registrationform() {
           <p className="font-label-sm text-label-sm text-on-surface-variant mb-sm">
             Sent to your email
           </p>
-          <div className="flex justify-between gap-xs">
-            {userData.otp.map((digit, index) => {
-              return (
-                <input
-                  key={index}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  className="w-full h-[48px] text-center rounded-lg border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-surface-container-lowest text-on-surface font-headline-md text-headline-md"
-                  maxLength="1"
-                  placeholder="-"
-                  type="text"
-                  onChange={(e) => handleChangeOtp(e, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  onKeyUp={(e) => handleKeyUp(e, index)}
-                />
-              );
-            })}
-          </div>
-          {errors.otp && (
-            <p className="text-label-sm text-error mt-xs">{errors.otp}</p>
-          )}
+          <OtpInput
+            value={userData.otp}
+            onChange={(otp) => setUserData({ ...userData, otp })}
+            error={errors.otp}
+          />
         </div>
-        {/* Submit Button */}
         <div className="pt-sm mt-auto">
           <button
-            className="w-full h-[48px] bg-primary text-on-primary rounded-md font-label-md text-label-md flex justify-center items-center gap-sm hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-[0.98]"
+            disabled={submitting}
+            className="w-full h-[48px] bg-primary text-on-primary rounded-md font-label-md text-label-md flex justify-center items-center gap-sm hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-[0.98] disabled:opacity-60"
             type="submit"
           >
-            Create Account
+            {submitting ? "Creating Account..." : "Create Account"}
             <span
               className="material-symbols-outlined"
               style={{ fontVariationSettings: '"FILL" 1' }}
@@ -224,12 +198,12 @@ function Registrationform() {
       </form>
       <p className="mt-md text-center font-body-md text-body-md text-on-surface-variant text-sm">
         Already have an account?{" "}
-        <a className="text-primary font-medium hover:underline" href="/login">
+        <Link className="text-primary font-medium hover:underline" to="/login">
           Log in
-        </a>
+        </Link>
       </p>
     </>
   );
 }
 
-export default Registrationform;
+export default RegistrationForm;

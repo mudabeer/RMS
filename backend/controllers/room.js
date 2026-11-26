@@ -1,6 +1,8 @@
 const Room = require('../models/Room')
 const Vco = require('../models/Vco')
 const User = require('../models/User')
+const Transaction = require('../models/Transaction')
+const Chore = require('../models/Chore')
 const nanoid = require('nano-id')
 const {StatusCodes} = require('http-status-codes')
 
@@ -215,10 +217,13 @@ const deleteRoom = async (req,res) => {
         throw new NotFoundError('room not found')
     }
 
-    res.status(StatusCodes.NO_CONTENT).json({
-        success: true,
-        'msg':'room deleted successfuly'
-    })
+    await Promise.all([
+        Transaction.deleteMany({ roomId }),
+        Chore.deleteMany({ roomId }),
+        Vco.deleteMany({ roomId })
+    ])
+
+    res.status(StatusCodes.NO_CONTENT).end()
 }
 
 module.exports = {

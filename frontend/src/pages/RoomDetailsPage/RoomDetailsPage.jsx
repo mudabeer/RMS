@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../api/axios";
-import SideNavbar from "../../components/layout/SideNavbar";
 import { useAuth } from "../../context/AuthContext";
 
 const tabs = ["Overview", "Members", "Expenses", "Chores"];
@@ -130,17 +129,13 @@ function RoomDetailsPage() {
   };
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background text-on-surface">
-      <SideNavbar activeNav="My Rooms" />
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden md:ml-64">
-        <header className="flex shrink-0 items-center justify-between bg-surface px-lg py-md shadow-sm">
-          <h1 className="font-headline-md text-headline-md font-bold text-primary">RMS Dashboard</h1>
-          <Link to="/MyRooms" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-surface-container">
+    <div className="bg-background p-container-margin md:p-xl">
+      <div className="mx-auto w-full max-w-[1200px] space-y-xl">
+        <div className="flex items-center justify-between">
+          <Link to="/my-rooms" className="inline-flex min-h-[44px] items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-surface-container">
             <span className="material-symbols-outlined text-lg">arrow_back</span> My Rooms
           </Link>
-        </header>
-        <div className="flex-1 overflow-y-auto bg-background p-container-margin md:p-xl">
-          <div className="mx-auto w-full max-w-[1200px] space-y-xl">
+        </div>
             {loading && <p className="text-on-surface-variant">Loading room…</p>}
             {!loading && error && !room && <div role="alert" className="rounded-xl bg-error-container p-5 text-on-error-container">{error}</div>}
             {room && (
@@ -257,8 +252,6 @@ function RoomDetailsPage() {
               </>
             )}
           </div>
-        </div>
-      </main>
     </div>
   );
 }

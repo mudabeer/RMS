@@ -39,7 +39,7 @@ function LandingHeader() {
         <button
           className="h-10 px-6 bg-primary text-on-primary rounded-[12px] font-label-md text-label-md btn-press transition-all shadow-level-1 tactile-widget"
           onClick={() => {
-            navigate("/sendotp");
+            navigate("/send-otp");
           }}
         >
           Get Started

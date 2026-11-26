@@ -1,40 +1,50 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../api/axios";
 
-function SendOtpPage() {
-const navigate = useNavigate();
+function SendOtpForm() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [reponseError, setResponseError] = useState("");
+  const [responseError, setResponseError] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleFormSubmit = async () => {
+    setSubmitting(true);
+    setResponseError("");
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/send-code",
-        {
-          email,
-        },
-      );
-      if (response.data.success) {
-        navigate("/register");
+      const response = await api.post("/auth/send-code", {
+        email,
+      });
+      if (response.data?.success) {
+        navigate("/register", { state: { email } });
       } else {
-        setResponseErrors("same thing went wrong try later");
+        setResponseError("Something went wrong. Please try again later.");
       }
-    } catch (error) {
-      setError(error.response.data.msg);
+    } catch (err) {
+      setResponseError(
+        err.response?.data?.msg || err.message || "Failed to send OTP."
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleChange = (e) => {
     setEmail(e.target.value);
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.includes("@")) setError("invalid email");
+    if (!email.includes("@")) {
+      setError("Invalid email");
+      return;
+    }
+    setError("");
     await handleFormSubmit();
   };
+
   return (
     <>
       <form
@@ -42,8 +52,11 @@ const navigate = useNavigate();
         id="otp-form"
         onSubmit={handleSubmit}
       >
-        {reponseError && (
-          <div className="p-sm rounded-lg bg-error-container border border-error flex items-center gap-xs mb-md">
+        {responseError && (
+          <div
+            role="alert"
+            className="w-full p-sm rounded-lg bg-error-container border border-error flex items-center gap-xs"
+          >
             <span
               className="material-symbols-outlined text-error"
               style={{ fontVariationSettings: '"FILL" 1' }}
@@ -51,7 +64,7 @@ const navigate = useNavigate();
               error
             </span>
             <p className="text-label-sm text-on-error-container">
-              {reponseError}
+              {responseError}
             </p>
           </div>
         )}
@@ -69,19 +82,20 @@ const navigate = useNavigate();
               placeholder="john@example.com"
               type="email"
               name="email"
+              value={email}
               onChange={handleChange}
             />
           </div>
           {error && <p className="text-label-sm text-error mt-xs">{error}</p>}
         </div>
-        {/* Actions */}
         <div className="w-full flex flex-col gap-4">
           <button
-            className="w-full h-12 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-body-md font-semibold transition-all duration-200 shadow-sm hover:shadow active:scale-[0.99] flex items-center justify-center gap-2"
+            disabled={submitting}
+            className="w-full h-12 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-body-md font-semibold transition-all duration-200 shadow-sm hover:shadow active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-60"
             id="verify-btn"
             type="submit"
           >
-            <span>Send OTP</span>
+            <span>{submitting ? "Sending..." : "Send OTP"}</span>
             <span className="material-symbols-outlined text-[18px]">
               arrow_forward
             </span>
@@ -90,12 +104,12 @@ const navigate = useNavigate();
       </form>
       <p className="mt-md text-center font-body-md text-body-md text-on-surface-variant text-sm">
         Already have an account?{" "}
-        <a className="text-primary font-medium hover:underline" href="/login">
+        <Link className="text-primary font-medium hover:underline" to="/login">
           Log in
-        </a>
+        </Link>
       </p>
     </>
   );
 }
 
-export default SendOtpPage
+export default SendOtpForm;

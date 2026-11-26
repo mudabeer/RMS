@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import SideNavbar from "../../components/layout/SideNavbar";
 import { useAuth } from "../../context/AuthContext";
 
 function ProfilePage() {
@@ -27,14 +26,8 @@ function ProfilePage() {
   const initials = profile?.name?.trim()?.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase() || "U";
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background text-on-surface">
-      <SideNavbar activeNav="Profile" />
-      <main className="flex min-w-0 flex-1 flex-col overflow-hidden md:ml-64">
-        <header className="flex shrink-0 items-center bg-surface px-lg py-md shadow-sm">
-          <h1 className="font-headline-md text-headline-md font-bold text-primary">Profile</h1>
-        </header>
-        <div className="flex-1 overflow-y-auto bg-background p-container-margin md:p-xl">
-          <section className="mx-auto w-full max-w-[900px] space-y-xl">
+    <div className="bg-background p-container-margin md:p-xl">
+      <section className="mx-auto w-full max-w-[900px] space-y-xl">
             <div>
               <h2 className="font-display text-display font-bold text-on-surface">Your profile</h2>
               <p className="mt-2 text-on-surface-variant">View the account details associated with your RMS account.</p>
@@ -68,8 +61,6 @@ function ProfilePage() {
               </article>
             )}
           </section>
-        </div>
-      </main>
     </div>
   );
 }

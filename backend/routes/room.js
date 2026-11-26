@@ -6,6 +6,7 @@ const loadRoom = require('../meddlewares/loadRoom')
 const memberExistsInRoom = require('../meddlewares/memberExistsInRoom')
 const requireCreator = require('../meddlewares/requireCreator')
 const requireRoomMember = require('../meddlewares/requireRoomMember')
+const { genVcoLimiter } = require('../meddlewares/rateLimiter')
 
 const {
     updateMember,
@@ -27,7 +28,7 @@ router.route('/join-room').patch(auth,joinRoom)
 router.route('/:roomId').get(auth,loadRoom,requireRoomMember,getSingleRoom)
                         .patch(auth,loadRoom,requireCreator,updateRoom)
                         .delete(auth,loadRoom,requireCreator,deleteRoom)
-router.route('/gen-vco').post(auth,genVco)
+router.route('/gen-vco').post(auth, genVcoLimiter, genVco)
 router.route('/:roomId/member/:memberId').patch(auth,
                                                 loadRoom,
                                                 memberExistsInRoom,

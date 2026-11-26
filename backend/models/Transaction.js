@@ -67,4 +67,7 @@ const transactionSchema = mongoose.Schema({
 },
 {timestamps:true})
 
+transactionSchema.index({ roomId: 1, createdAt: -1 });
+transactionSchema.index({ 'splitAmong.userId': 1 });
+
 module.exports = mongoose.model('transaction',transactionSchema)

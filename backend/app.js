@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
+const helmet = require('helmet');
 
 const connectDB = require('./db/db')
 const authRouter = require('./routes/auth')
@@ -12,14 +13,17 @@ const transRouter = require('./routes/transaction')
 const choreRouter = require('./routes/chore')
 
 const errorHandler = require('./meddlewares/error-handler')
+const sanitizeInput = require('./meddlewares/sanitize')
 
 
 //middlewares
+app.use(helmet())
 app.use(express.json())
+app.use(sanitizeInput)
 app.use(cookieParser())
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     credentials: true,
   })
 );

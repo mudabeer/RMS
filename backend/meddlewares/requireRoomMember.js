@@ -1,5 +1,5 @@
 const {
-    BadRequestError
+    ForbiddenError
 } = require('../errors/index')
 
 const requireRoomMember = async (req,res,next) => {
@@ -11,7 +11,7 @@ const requireRoomMember = async (req,res,next) => {
     })
 
     if(!exist){
-        throw new BadRequestError('invalid requset of non existing member in room')
+        throw new ForbiddenError('invalid requset of non existing member in room')
     }
     
     req.membersDoc = membersDoc

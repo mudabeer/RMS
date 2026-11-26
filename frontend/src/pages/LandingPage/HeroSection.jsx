@@ -22,7 +22,7 @@ function HeroSection() {
           <button
             className="w-full sm:w-auto px-8 h-[48px] bg-primary text-on-primary rounded-[12px] font-label-md text-label-md btn-press transition-all shadow-level-1 flex items-center justify-center fade-in-up-element stagger-4 tactile-widget"
             onClick={() => {
-              navigate("/sendotp");
+              navigate("/send-otp");
             }}
           >
             Get Started

@@ -27,33 +27,48 @@ const createTrans = async (req,res) =>{
        
     }else if(splitType === 'custom'){
 
-        if(!members){
+        if(!Array.isArray(members) || members.length === 0){
             throw new BadRequestError('provide members')
+        }
+
+        members = [...new Set(members.map(String))]
+        const roomMemberSet = new Set(req.membersDoc)
+        const allBelongToRoom = members.every(id => roomMemberSet.has(id))
+        if(!allBelongToRoom){
+            throw new BadRequestError('all split members must belong to the room')
         }
     }else{
         throw new BadRequestError('invalid split type')
     }
 
-    if(!amount){
-        throw new BadRequestError('please provide amount')
+    const numericAmount = Number(amount)
+    if(amount === undefined || amount === null || amount === '' || !Number.isFinite(numericAmount) || numericAmount <= 0){
+        throw new BadRequestError('please provide a valid positive amount')
     }
 
-    const debtAmount = amount/(members.length) 
+    const totalCents = Math.round(numericAmount * 100)
+    if(totalCents <= 0){
+        throw new BadRequestError('please provide a valid positive amount')
+    }
 
-    const splitAmong = members.map(
-        member => {
-            if(member === req.user.userId.toString()){
-                return {userId:member,debtAmount:debtAmount,paidAmount:debtAmount,status:'Paid'}
-            }else{
-                return {userId:member,debtAmount:debtAmount}
-            }})
+    const baseCents = Math.floor(totalCents / members.length)
+    const remainder = totalCents % members.length
+
+    const splitAmong = members.map((member, index) => {
+        const memberDebt = (baseCents + (index < remainder ? 1 : 0)) / 100
+        if(member === req.user.userId.toString()){
+            return {userId:member,debtAmount:memberDebt,paidAmount:memberDebt,status:'Paid'}
+        }else{
+            return {userId:member,debtAmount:memberDebt}
+        }
+    })
 
         const transaction = await Transaction.create({
             title,
-            amount,
+            amount: totalCents / 100,
             category,
             roomId:req.params.roomId,
-            shareAmount:debtAmount,
+            shareAmount: baseCents / 100,
             paidBy:req.user.userId,
             splitAmong
         })
@@ -65,7 +80,7 @@ const createTrans = async (req,res) =>{
 }
 
 const getSingleTrans = async (req,res) =>{
-    res.status(StatusCodes.CREATED).json({
+    res.status(StatusCodes.OK).json({
         success: true,
         data:req.transaction,
         msg:"found transaction"
@@ -237,10 +252,7 @@ const deleteTrans = async (req,res) => {
         throw new NotFoundError('transaction not found')
     }
 
-    res.status(StatusCodes.NO_CONTENT).json({
-        success: true,
-        'msg':"deleted transaction"
-    })
+    res.status(StatusCodes.NO_CONTENT).end()
 }
 
 module.exports = {

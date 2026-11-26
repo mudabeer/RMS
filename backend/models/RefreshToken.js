@@ -17,4 +17,6 @@ const RefreshTokenSchema = mongoose.Schema({
     }
 })
 
+RefreshTokenSchema.index({ user: 1 });
+
 module.exports = mongoose.model("RefreshToken",RefreshTokenSchema)
