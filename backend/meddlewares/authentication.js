@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken')
-const cookie = require('cookie-parser')
 
 const {UnauthenticatedError} = require('../errors/index')
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 
 const userSchema = mongoose.Schema({
     name: {
@@ -38,7 +39,7 @@ userSchema.pre('save', async function(next) {
 
 userSchema.methods.createRefreshToken = function(){
     return jwt.sign(
-        {userId: this._id,userName: this.name},
+        {userId: this._id, userName: this.name, jti: crypto.randomUUID()},
         process.env.JWT_REHRESH_SECRET,
         {expiresIn:process.env.JWT_REFRESH_LIFETIME}
     )

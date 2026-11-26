@@ -11,26 +11,32 @@ export default function AuthProvider({children}){
     const [loading, setloading] = useState(true);
 
     useEffect(() => {
+        const unsubscribe = tokenStore.subscribe((token) => {
+            setAccessToken(token);
+            if (!token) {
+                setUser(null);
+            }
+        });
+
         const restoreSession = async () => {
             try {
                 const response = await refreshAxios.post("auth/refresh")
                 tokenStore.set(response.data.accessToken);
-                setAccessToken(response.data.accessToken);
                 setUser(response.data.user);
-                
             }catch{
-                setAccessToken(null)
-                setUser(null)
+                tokenStore.set(null);
+                setUser(null);
             }finally{
                 setloading(false)
             }
         }
 
         restoreSession()
+        return unsubscribe;
     }, [])
 
     const login = (token, userData) => {
-        setAccessToken(token);
+        tokenStore.set(token);
         setUser(userData);
     }
 

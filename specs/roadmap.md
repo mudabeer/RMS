@@ -30,21 +30,21 @@
 **Goal:** Make authentication reliable and secure for real users.
 
 ### 1.1 Token flow reconciliation
-- [ ] Decide: read access token from cookie or `Authorization` header — reconcile `authentication.js` with `cookies.js`.
-- [ ] Add `_retry` flag to Axios interceptor to prevent infinite refresh loops.
-- [ ] Synchronize `tokenStore.set(token)` with `AuthContext` state.
+- [x] Decide: read access token from cookie or `Authorization` header — reconcile `authentication.js` with `cookies.js`.
+- [x] Add `_retry` flag to Axios interceptor to prevent infinite refresh loops.
+- [x] Synchronize `tokenStore.set(token)` with `AuthContext` state.
 
 ### 1.2 Refresh token rotation
-- [ ] Replace bcrypt with SHA-256 for refresh token hashing.
-- [ ] Implement Refresh Token Rotation (RTR) — issue a new refresh token on every `/refresh`, delete the old one.
-- [ ] Add token-reuse detection: if a deleted token is presented, revoke all sessions for that user.
+- [x] Replace bcrypt with SHA-256 for refresh token hashing.
+- [x] Implement Refresh Token Rotation (RTR) — issue a new refresh token on every `/refresh`, delete the old one.
+- [x] Add token-reuse detection: if a deleted token is presented, revoke all sessions for that user.
 
 ### 1.3 Session invalidation
-- [ ] Delete all refresh tokens on password reset (`auth.js`).
+- [x] Delete all refresh tokens on password reset (`auth.js`).
 - [ ] Delete all refresh tokens on password change (if added later).
 
 ### 1.4 OTP hardening
-- [ ] Replace `Math.random()` with `crypto.randomInt` in `generateOTP.js`.
+- [x] Replace `Math.random()` with `crypto.randomInt` in `generateOTP.js`.
 
 ---
 
