@@ -8,10 +8,8 @@ process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
 process.env.JWT_ACCESS_LIFETIME = '15m';
 process.env.JWT_REFRESH_LIFETIME = '7d';
 
-const transporter = require('../config/email');
-vi.spyOn(transporter, 'sendMail').mockResolvedValue({
-  accepted: ['mock@example.com'],
-});
+const emailConfig = require('../config/email');
+vi.spyOn(emailConfig, 'sendEmail').mockResolvedValue({ data: { id: 'mock-message-id' } });
 
 const app = require('../app');
 const User = require('../models/User');
@@ -37,7 +35,7 @@ describe('Phase 6 — Backend Room & Registration Integration Tests', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    transporter.sendMail.mockResolvedValue({ accepted: ['mock@example.com'] });
+    emailConfig.sendEmail.mockResolvedValue({ data: { id: 'mock-message-id' } });
     await User.deleteMany({});
     await Room.deleteMany({});
     await Vco.deleteMany({});
@@ -51,9 +49,9 @@ describe('Phase 6 — Backend Room & Registration Integration Tests', () => {
       .send({ email: 'newuser@example.com' });
 
     expect(sendRes.status).toBe(200);
-    expect(transporter.sendMail).toHaveBeenCalledTimes(1);
+    expect(emailConfig.sendEmail).toHaveBeenCalledTimes(1);
 
-    const otpHtml = transporter.sendMail.mock.calls[0][0].html;
+    const otpHtml = emailConfig.sendEmail.mock.calls[0][0].html;
     const otpMatch = otpHtml.match(/\b(\d{6})\b/);
     expect(otpMatch).toBeTruthy();
     const plainOtp = otpMatch[1];
@@ -130,7 +128,7 @@ describe('Phase 6 — Backend Room & Registration Integration Tests', () => {
       .send({ roomCode: createdRoom.roomCode });
 
     expect(vcoRes.status).toBe(200);
-    expect(transporter.sendMail).toHaveBeenCalledTimes(1);
+    expect(emailConfig.sendEmail).toHaveBeenCalledTimes(1);
 
     const vcoDoc = await Vco.findOne({ roomId: createdRoom._id });
     expect(vcoDoc).toBeTruthy();

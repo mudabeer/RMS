@@ -29,7 +29,7 @@ Verified against the current codebase:
 - [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/)
 - JWT-based authentication ([jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)) with access + refresh tokens
 - [bcryptjs](https://www.npmjs.com/package/bcryptjs) for password/OTP hashing
-- [nodemailer](https://www.npmjs.com/package/nodemailer) for transactional email (OTPs, join codes, password reset)
+- [googleapis](https://www.npmjs.com/package/googleapis) for transactional email through the Gmail API
 
 **Frontend**
 - [React 19](https://react.dev/) with [Vite](https://vitejs.dev/)
@@ -53,7 +53,7 @@ cd backend
 npm install
 ```
 
-Create a `backend/.env` file (there's no `.env.example` committed yet) with:
+Create `backend/.env` from [`backend/.env.example`](./backend/.env.example) and configure:
 
 ```env
 PORT=3000
@@ -62,16 +62,18 @@ NODE_ENV=development
 
 JWT_ACCESS_SECRET=your_access_token_secret
 JWT_ACCESS_LIFETIME=15m
-JWT_REHRESH_SECRET=your_refresh_token_secret
+JWT_REFRESH_SECRET=your_refresh_token_secret
 JWT_REFRESH_LIFETIME=7d
 
 EMAIL=your_gmail_address
-PASSWORD=your_gmail_app_password
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+GOOGLE_REFRESH_TOKEN=your_google_oauth_refresh_token
 
 FRONTEND_URL=http://localhost:5173
 ```
 
-> `JWT_REHRESH_SECRET` is spelled that way in the actual code — see [docs/BACKEND.md](./docs/BACKEND.md#environment-variables) for details.
+The Gmail API refresh token must come from an OAuth client granted the `gmail.send` scope. External OAuth apps left in Testing issue refresh tokens that expire after 7 days; complete Google's production publishing and sensitive-scope verification requirements before relying on this for ongoing production email.
 
 ### 3. Start the backend
 

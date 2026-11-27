@@ -9,7 +9,7 @@ This file serves as the living project guide for AI agents and human contributor
 RMS is a full-stack web application designed for shared living arrangements to manage rooms, roommates, shared expenses, debt settlements, and chores.
 
 ### Technology Stack
-- **Backend:** Node.js, Express 5, MongoDB / Mongoose, JWT (Access + Refresh tokens), Nodemailer, Bcryptjs, Nano-id.
+- **Backend:** Node.js, Express 5, MongoDB / Mongoose, JWT (Access + Refresh tokens), Gmail API via OAuth2, Bcryptjs, Nano-id.
 - **Frontend:** React 19, Vite, Tailwind CSS 4, React Router v7, Axios.
 - **Design System:** Material Design 3 / Stitch aesthetic with token-based color variables.
 
@@ -21,7 +21,7 @@ RMS is a full-stack web application designed for shared living arrangements to m
 RMS/
 ├── backend/
 │   ├── app.js               # Express application entry point & middleware mounting
-│   ├── config/              # Transporter and service configurations
+│   ├── config/              # API and service configurations
 │   ├── controllers/         # Request handling & domain controllers
 │   ├── db/                  # Mongoose connection helpers
 │   ├── errors/              # Custom HTTP error classes (CustomAPI, BadRequest, NotFound, etc.)

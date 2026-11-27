@@ -7,11 +7,15 @@
     "start": "node app.js",
     "test": "vitest run",
     "lint": "eslint .",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "gmail-auth": "node oauth-helper.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
@@ -19,12 +23,12 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.5",
+    "googleapis": "^190.0.0",
     "helmet": "^8.3.0",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.3",
-    "nano-id": "^1.1.0",
-    "nodemailer": "^8.0.10"
+    "nano-id": "^1.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

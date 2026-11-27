@@ -25,7 +25,6 @@ const {BadRequestError,
     NotFoundError,
     UnauthenticatedError
 } = require('../errors/index')
-const { transporter } = require('../config/email')
 const { log } = require('console')
 
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000

@@ -1,28 +1,20 @@
-const transporter = require('../config/email')
-
-const {BadRequestError
-} = require('../errors/index')
+const { sendEmail } = require('../config/email')
 
 const sendRegCode = async (email,otp) => {
     
-    const info = await transporter.sendMail({
-        from:process.env.EMAIL,
-        to:email,
+    await sendEmail({
+        to: email,
         subject: 'RMS Email verification code',
         html: `<h1>HI!</h1>
         <br/><br/>
         Your verification code is: ${otp} Use this code to verify your login email.
         <br/>If you didn't request the code, please ignore this message.<br/><br/>Best regards,<br/>RMS`
-    },)
-    if(info.accepted.length === 0){
-        throw new BadRequestError('Failed to send verification email')
-    }    
+    })
 };
 const resetPasswordMail = async (resetLink,email) => {
     
-    const info = await transporter.sendMail({
-        from:process.env.EMAIL,
-        to:email,
+    await sendEmail({
+        to: email,
         subject: 'RMS Password Reset Request',
         html: `<h2>Reset Your Password</h2>
 
@@ -44,17 +36,13 @@ const resetPasswordMail = async (resetLink,email) => {
 
 <p>Thank you,<br>RMS Team</p>
 `
-    },)
-    if(info.accepted.length === 0){
-        throw new BadRequestError('Failed to send verification email')
-    }    
+    })
 };
 
 const greetMail = async (email, name) => {
 
 
-    const info = await transporter.sendMail({
-        from: process.env.EMAIL,
+    await sendEmail({
         to: email,
         subject: 'Welcome to RMS!',
         html: `
@@ -78,14 +66,10 @@ const greetMail = async (email, name) => {
             <tr> <td style="background:#f8fafc;padding:20px;text-align:center;color:#64748b;font-size:14px;"> © 2026 RMS. All rights reserved.
         `
     })
-    if(info.accepted.length === 0){
-        throw new BadRequestError('Failed to send verification email')
-    }  
 }
 
 const sendVco = async (email,name, vco) => {
-    const info = await transporter.sendMail({
-        from: process.env.EMAIL,
+    await sendEmail({
         to: email,
         subject: 'VCO Code For Joining Room',
         html:`
@@ -136,8 +120,7 @@ const sendVco = async (email,name, vco) => {
 }
 
 const sendNewMember = async (memberName,email,roomName) => {
-    const info = await transporter.sendMail({
-        from: process.env.EMAIL,
+    await sendEmail({
         to: email,
         subject: 'Room Update: New Member Added',
         html:`

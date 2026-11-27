@@ -11,7 +11,7 @@
 | Database | MongoDB | via Mongoose ODM |
 | Auth | JWT (jsonwebtoken) | Access token (15 min) + Refresh token (7 days) |
 | Password hashing | bcryptjs | Salt rounds: 10 |
-| Email | Nodemailer | Gmail SMTP with App Passwords |
+| Email | Gmail API (`googleapis`) | OAuth2 refresh token; `gmail.send` scope |
 | ID generation | nano-id | Room codes, verification codes |
 | Cookies | cookie-parser | httpOnly refresh token cookies |
 | CORS | cors | Currently hardcoded to `localhost:5173` |

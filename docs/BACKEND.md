@@ -10,11 +10,11 @@ The backend is a REST API built with:
 - **[MongoDB](https://www.mongodb.com/) via [Mongoose](https://mongoosejs.com/)** — database and schemas
 - **[jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)** — access/refresh token generation and verification
 - **[bcryptjs](https://www.npmjs.com/package/bcryptjs)** — password and OTP hashing
-- **[nodemailer](https://www.npmjs.com/package/nodemailer)** — sending verification codes, welcome emails, and password reset links via Gmail
+- **[googleapis](https://www.npmjs.com/package/googleapis)** — sending verification codes, welcome emails, and password reset links through the Gmail API
 - **[nano-id](https://www.npmjs.com/package/nano-id)** — generating room codes and short verification codes
 - **[cookie-parser](https://www.npmjs.com/package/cookie-parser)** + **[cors](https://www.npmjs.com/package/cors)** — cookies and cross-origin requests from the frontend
 
-There is no test suite yet — `npm test` is a placeholder script.
+Backend tests use Vitest; run them with `npm test` from `backend/`.
 
 ## Backend Structure
 
@@ -22,7 +22,7 @@ There is no test suite yet — `npm test` is a placeholder script.
 backend/
 ├── app.js               # Express app setup, middleware, route mounting, server start
 ├── config/
-│   └── email.js          # nodemailer transporter configuration
+│   └── email.js          # Gmail API OAuth2 configuration and MIME message sender
 ├── controllers/
 │   ├── auth.js           # register/login/logout/refresh/password reset
 │   ├── member.js         # update/delete a room member
@@ -90,7 +90,7 @@ Errors thrown anywhere in this chain (as a `BadRequestError`, `NotFoundError`, `
 
 Authentication is JWT-based, with a short-lived **access token** and a longer-lived **refresh token**:
 
-- `User.createRefreshToken()` and `User.creatAccessToken()` (`backend/models/User.js`) sign the tokens with `JWT_REHRESH_SECRET` / `JWT_ACCESS_SECRET`.
+- `User.createRefreshToken()` and `User.creatAccessToken()` (`backend/models/User.js`) sign the tokens with `JWT_REFRESH_SECRET` / `JWT_ACCESS_SECRET`.
 - On login (`backend/controllers/auth.js`), both tokens are generated, and the refresh token's hash is stored in a `RefreshToken` document so it can be revoked (e.g. on logout).
 - `backend/utils/cookies.js` attaches both tokens to the response as `httpOnly` cookies (`accessToken`, `refreshToken`).
 - `backend/meddlewares/authentication.js` protects routes, but currently reads the access token from an `Authorization: Bearer <token>` header — **not** from the cookie that login actually sets.
@@ -179,7 +179,7 @@ All routes are mounted under `/api/v1` in `backend/app.js`.
 
 ## Environment Variables
 
-These are the variables the backend code actually reads (there's no `.env.example` committed yet — you'll need to create your own `backend/.env`):
+Copy `backend/.env.example` to `backend/.env` and set the following values:
 
 ```env
 PORT=3000
@@ -192,12 +192,14 @@ JWT_REFRESH_SECRET=your_refresh_token_secret
 JWT_REFRESH_LIFETIME=7d
 
 EMAIL=your_gmail_address
-PASSWORD=your_gmail_app_password
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+GOOGLE_REFRESH_TOKEN=your_google_oauth_refresh_token
 
 FRONTEND_URL=http://localhost:5173
 ```
 
-`EMAIL` / `PASSWORD` are used as Gmail SMTP credentials in `backend/config/email.js`. If you use a real Gmail account, you'll need an [App Password](https://support.google.com/accounts/answer/185833), not your normal account password.
+The Gmail API sender uses OAuth2 credentials and the `https://www.googleapis.com/auth/gmail.send` scope. External OAuth apps in Testing issue refresh tokens that expire after 7 days. Moving to production requires publishing the consent screen and completing Google's verification for sensitive scopes, including scope justification, accurate branding and policy links, and a demonstration of the app's use of the scope. Check Google's current requirements before submitting.
 
 ## Running the Backend
 
@@ -217,7 +219,4 @@ Documented honestly, based on what's in the code today:
 
 - **Access-token mismatch:** Login/refresh attach `accessToken` and `refreshToken` as `httpOnly` cookies (`backend/utils/cookies.js`), but `backend/meddlewares/authentication.js` only reads the access token from an `Authorization: Bearer <token>` header (the cookie-reading line is present but commented out). As written, a browser-based frontend using the cookies set at login has no way to retrieve the token to send it as a header — this needs to be reconciled before protected routes work end-to-end.
 - **Transaction deletion is over-blocked** by a logic bug in `deleteTrans` — see [FEATURES.md](./FEATURES.md#deleting-a-transaction).
-- **`JWT_REHRESH_SECRET` is misspelled** consistently throughout the code (see Environment Variables above).
-- **Email config typo:** `backend/config/email.js` sets `host: 'stmp.gmail.cpm'` (should be `smtp.gmail.com`), though this particular field is unused in practice because the transporter is created with `service: 'gmail'`, which ignores the `host`/`port` options.
 - **`nodemon` isn't declared as a dependency** even though the `start` script depends on it.
-- **No automated tests** exist yet.
